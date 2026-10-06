@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Dtool MBTD</title>
+    <base href="/app/" />
+    <meta name="theme-color" content="#0d8775" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="MBTD" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <link href="_framework/dotnet.8zqlhi5ebl.js" rel="preload" as="script" fetchpriority="high" crossorigin="anonymous" integrity="sha256-LHsrpU/ipL7kyIkCQMNEgEAIsODGqVkDwdpbSzzNX7U=" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link href="manifest.webmanifest" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+    <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png" />
+    <script type="importmap">{
+  "imports": {
+    "./_framework/blazor.webassembly.js": "./_framework/blazor.webassembly.w3qd1tpl0e.js",
+    "./_framework/dotnet.js": "./_framework/dotnet.8zqlhi5ebl.js",
+    "./_framework/dotnet.native.js": "./_framework/dotnet.native.0pa5ilacqb.js",
+    "./_framework/dotnet.runtime.js": "./_framework/dotnet.runtime.v06hirbjsv.js"
+  },
+  "scopes": {},
+  "integrity": {
+    "./_framework/blazor.webassembly.js": "sha256-lDXsDYFgm62F+YUvxES7IOTCXYpiHpU3uR45YdC6mq4=",
+    "./_framework/blazor.webassembly.w3qd1tpl0e.js": "sha256-lDXsDYFgm62F+YUvxES7IOTCXYpiHpU3uR45YdC6mq4=",
+    "./_framework/dotnet.8zqlhi5ebl.js": "sha256-LHsrpU/ipL7kyIkCQMNEgEAIsODGqVkDwdpbSzzNX7U=",
+    "./_framework/dotnet.js": "sha256-LHsrpU/ipL7kyIkCQMNEgEAIsODGqVkDwdpbSzzNX7U=",
+    "./_framework/dotnet.native.0pa5ilacqb.js": "sha256-nNTXlMTBnybBAel3jy9Izsmh+N9b/4uXYThmLt8/myI=",
+    "./_framework/dotnet.native.js": "sha256-nNTXlMTBnybBAel3jy9Izsmh+N9b/4uXYThmLt8/myI=",
+    "./_framework/dotnet.runtime.js": "sha256-QbnqrZGHtGq7wudS17/AYEPpH9JkphrsyVllD6JHmds=",
+    "./_framework/dotnet.runtime.v06hirbjsv.js": "sha256-QbnqrZGHtGq7wudS17/AYEPpH9JkphrsyVllD6JHmds="
+  }
+}</script>
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        Có lỗi xảy ra trong app.
+        <a href="." class="reload">Tải lại</a>
+        <span class="dismiss">✕</span>
+    </div>
+    <script src="_framework/blazor.webassembly.w3qd1tpl0e.js"></script>
+    <script>
+        // bản mới (người dùng 2026-10-05 "app chưa cập nhật"): service worker mới tự chạy (skipWaiting + claim) → trang đang mở vẫn là bản cũ.
+        // Mới mở app (< 60 s) → tự tải lại; đang làm → thanh "Đã có bản mới · Tải lại" (nhà đã tự lưu sau mỗi thao tác).
+        (function () {
+            if (!('serviceWorker' in navigator)) return;
+            var had = !!navigator.serviceWorker.controller, t0 = Date.now(), done = false;
+            navigator.serviceWorker.register('service-worker.js', { updateViaCache: 'none' })
+                .then(function (r) { r.update().catch(function () { }); }).catch(function () { });
+            navigator.serviceWorker.addEventListener('controllerchange', function () {
+                if (!had || done) return; done = true;
+                if (Date.now() - t0 < 60000) { location.reload(); return; }
+                var b = document.createElement('div'); b.className = 'upd';
+                b.innerHTML = '<span>Đã có bản mới của app.</span><button type="button">Tải lại</button>';
+                b.querySelector('button').onclick = function () { location.href = document.baseURI; };
+                document.body.appendChild(b);
+            });
+        })();
+    </script>
+</body>
+
+</html>
