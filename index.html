@@ -1,0 +1,800 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dtool cho AutoCAD</title>
+<meta name="description" content="Dtool – add-in AutoCAD vẽ nhanh kiến trúc và kết cấu: mặt bằng tự động, tường – cửa tự cắt, bố trí nội thất, mặt cắt – mặt đứng, chi tiết cốt thép, khối lượng ra Excel, kèm thư viện 249 block động.">
+<link rel="canonical" href="https://dtool.vn/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://dtool.vn/">
+<meta property="og:site_name" content="Dtool">
+<meta property="og:locale" content="vi_VN">
+<meta property="og:title" content="Dtool – add-in AutoCAD vẽ nhanh kiến trúc & kết cấu">
+<meta property="og:description" content="Mặt bằng tự động, tường – cửa tự cắt, bố trí nội thất, mặt cắt – mặt đứng, cốt thép, khối lượng ra Excel. Thư viện 249 block động. Dùng thử 7 ngày.">
+<meta property="og:image" content="https://dtool.vn/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='4' fill='%2315212b'/%3E%3Cpath d='M10 8h6a8 8 0 0 1 0 16h-6z' fill='none' stroke='%23e3a443' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Roboto+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Bố cục: tờ giấy vẽ kỹ thuật — lưới mờ, nét kích thước làm tiêu đề mục, tên lệnh dạng phím; ảnh bản vẽ luôn nằm trên "giấy" trắng. */
+:root{
+  --bg:#f2f4f3; --surface:#ffffff; --ink:#15212b; --muted:#56636e; --line:#d4dbde; --line2:#e6eaec;
+  --accent:#995d0b; --accent-ink:#ffffff; --accent-soft:#f5e8d2; --blue:#2c5d88; --blue-soft:#e3edf6;
+  --grid:rgba(21,33,43,.055); --paper:#ffffff; --paper-line:#dfe4e6;
+  --cad:#121a21; --cad-2:#1a252e; --cad-line:#2c3a46; --cad-ink:#e3e9ed; --cad-muted:#93a2ae; --cad-accent:#e3a443;
+  --shadow:0 1px 2px rgba(21,33,43,.06),0 8px 24px rgba(21,33,43,.07);
+  --f-display:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",Consolas,"Courier New",monospace;
+  --f-cad:"Roboto Condensed","Arial Narrow",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0e1317; --surface:#151c22; --ink:#e3e8eb; --muted:#9aa7b1; --line:#2a343c; --line2:#212a31;
+    --accent:#e3a443; --accent-ink:#1a1204; --accent-soft:#33260f; --blue:#8dbbe6; --blue-soft:#1b2a37;
+    --grid:rgba(227,232,235,.045); --paper:#fbfbfa; --paper-line:#3a454e;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0e1317; --surface:#151c22; --ink:#e3e8eb; --muted:#9aa7b1; --line:#2a343c; --line2:#212a31;
+  --accent:#e3a443; --accent-ink:#1a1204; --accent-soft:#33260f; --blue:#8dbbe6; --blue-soft:#1b2a37;
+  --grid:rgba(227,232,235,.045); --paper:#fbfbfa; --paper-line:#3a454e;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.18}
+p{margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+kbd,.cmd{font-family:var(--f-mono);font-size:.78em;font-weight:500;padding:.08em .45em;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;background:var(--surface);color:var(--ink);white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:.5em;white-space:nowrap;font:600 15px/1 var(--f-body);padding:13px 20px;border-radius:6px;text-decoration:none;border:1px solid transparent;cursor:pointer}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{border-color:var(--line);color:var(--ink);background:var(--surface)}
+.btn-ghost:hover{border-color:var(--ink)}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line2)}
+.top .wrap{display:flex;align-items:center;gap:24px;height:62px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:800 20px/1 var(--f-display);letter-spacing:-.01em}
+.brand svg{width:30px;height:30px}
+.brand small{font:500 12px/1 var(--f-cad);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.nav{display:flex;gap:20px;margin-left:auto;font-size:14.5px}
+.nav a{text-decoration:none;color:var(--muted);white-space:nowrap}
+.nav a:hover{color:var(--ink)}
+.top .btn{padding:10px 14px;font-size:14px}
+@media (max-width:1100px){.nav{display:none}.top .btn{margin-left:auto}}
+@media (max-width:420px){.brand small{display:none}}
+/* nút app điện thoại (2026-10-06, người dùng "thêm nút app trên web") */
+.top-acts{display:flex;gap:8px;align-items:center}
+.top .top-acts .btn{margin-left:0}
+.app-btn svg{width:16px;height:16px;flex:none}
+.app-btn .s{display:none}
+@media (max-width:1100px){.top-acts{margin-left:auto}}
+@media (max-width:1440px){.top .app-btn .l{display:none}.top .app-btn .s{display:inline}}
+.app-sec{padding-block:72px;border-bottom:1px solid var(--line2)}
+.app-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px;margin-top:32px;align-items:start}
+@media (max-width:860px){.app-grid{grid-template-columns:1fr;gap:32px}}
+.app-steps{margin:14px 0 0;padding-left:1.25em;color:var(--muted)}
+.app-steps li{margin:8px 0;padding-left:2px}
+.app-steps b{color:var(--ink)}
+.app-url{align-self:center;font:600 15px/1 var(--f-cad);color:var(--muted);letter-spacing:.02em}
+
+/* hero */
+.hero{position:relative;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;border-bottom:1px solid var(--line2)}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:48px;align-items:center;padding-block:64px 56px}
+.eyebrow{font:600 12.5px/1.3 var(--f-cad);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero h1{font-size:clamp(2.1rem,4.4vw,3.45rem);font-weight:800;letter-spacing:-.022em;margin-top:14px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.lead{font-size:1.1rem;color:var(--muted);margin-top:18px;max-width:58ch}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.cmdline{margin-top:30px;background:var(--cad);color:var(--cad-ink);border-radius:6px;padding:12px 16px;font:13px/1.75 var(--f-mono);max-width:520px;overflow-x:auto}
+.cmdline div{white-space:nowrap}
+.cmdline .p{color:var(--cad-muted)}
+.cmdline .k{color:var(--cad-accent);font-weight:600}
+.caret{display:inline-block;width:.55em;height:1em;background:var(--cad-ink);vertical-align:-2px;margin-left:2px;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.cadwin{background:var(--cad);border:1px solid var(--cad-line);border-radius:8px;overflow:hidden;box-shadow:var(--shadow)}
+.cadwin-bar{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--cad-2);border-bottom:1px solid var(--cad-line);font:500 12.5px/1 var(--f-cad);color:var(--cad-muted);letter-spacing:.03em}
+.cadwin-bar i{width:9px;height:9px;border-radius:50%;background:var(--cad-line)}
+.cadwin-bar b{color:var(--cad-ink);font-weight:500}
+.figcap{font:14px/1.45 var(--f-cad);color:var(--muted);margin-top:10px}
+.hero .wrap>*{min-width:0}
+@media (max-width:900px){.hero .wrap{grid-template-columns:minmax(0,1fr);gap:36px;padding-block:44px 40px}}
+
+/* stats */
+.stats{border-bottom:1px solid var(--line2);background:var(--surface)}
+.stats .wrap{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.stat{padding:22px 16px;border-left:1px solid var(--line2)}
+.stat:first-child{border-left:0;padding-left:0}
+.stat b{display:block;font:800 clamp(1.5rem,2.6vw,2rem)/1.1 var(--f-display);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{font:14px/1.35 var(--f-cad);color:var(--muted)}
+@media (max-width:760px){.stats .wrap{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{border-left:0;padding-left:0;border-top:1px solid var(--line2)}.stat:nth-child(-n+2){border-top:0}.stat:last-child{grid-column:span 2}}
+
+/* sections */
+section{padding-block:88px}
+.sec-head{max-width:760px}
+.dim{display:flex;align-items:center;gap:10px;font:600 12.5px/1 var(--f-cad);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.dim::before,.dim::after{content:"";height:9px;border-left:1.5px solid currentColor}
+.dim span{order:0}
+.dim .rule{flex:0 0 36px;height:1.5px;background:currentColor;opacity:.75}
+.sec-head h2{font-size:clamp(1.7rem,3.1vw,2.45rem);font-weight:800;letter-spacing:-.02em;margin-top:14px}
+.sec-head p{color:var(--muted);font-size:1.05rem;margin-top:14px;max-width:64ch}
+.alt{background:var(--surface);border-block:1px solid var(--line2)}
+
+/* MBTD */
+.steps{list-style:none;padding:0;margin:40px 0 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;counter-reset:s;border-top:1.5px solid var(--ink)}
+.steps li{counter-increment:s;padding:18px 20px 0 0;position:relative}
+.steps li::before{content:counter(s);position:absolute;top:-11px;left:0;width:21px;height:21px;border-radius:50%;background:var(--bg);border:1.5px solid var(--ink);font:600 12px/18px var(--f-cad);text-align:center}
+.steps h3{font-size:1rem;margin-top:8px}
+.steps p{font-size:.94rem;color:var(--muted);margin-top:6px}
+@media (max-width:860px){.steps{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:28px}}
+@media (max-width:480px){.steps{grid-template-columns:1fr}}
+.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:48px}
+.shots figure{margin:0;min-width:0}
+.shots .wide{grid-column:span 2}
+@media (max-width:760px){.shots{grid-template-columns:1fr}.shots .wide{grid-column:auto}}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:48px;margin-top:56px}
+@media (max-width:860px){.two{grid-template-columns:1fr;gap:36px}}
+.two h3{font-size:1.15rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.chip{font:14px/1.2 var(--f-cad);padding:7px 11px;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+.tpl{margin:16px 0 0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px 14px}
+.tpl dt{font:700 14px/22px var(--f-mono);width:26px;height:24px;text-align:center;border:1px solid var(--ink);border-radius:3px}
+.tpl dd{margin:0;font-size:.95rem;color:var(--muted);align-self:center}
+.tpl dd b{color:var(--ink);font-weight:600}
+
+.sub-h{font-size:1.15rem;margin-top:56px}
+.cad-out{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:20px;margin-top:18px;align-items:start}
+.cad-out figure{margin:0;min-width:0}
+.cad-out .wide{grid-column:span 2}
+@media (max-width:760px){.cad-out{grid-template-columns:1fr}.cad-out .wide{grid-column:auto}}
+.paper{background:var(--paper);border:1px solid var(--paper-line);border-radius:6px;padding:14px;box-shadow:var(--shadow)}
+.paper img{margin:0 auto}
+
+/* what's new */
+.news{padding-block:72px;border-bottom:1px solid var(--line2)}
+.news .grid3{margin-top:32px}
+.ver{display:inline-block;font:600 12px/1 var(--f-mono);padding:4px 7px;border-radius:3px;background:var(--accent-soft);color:var(--accent);margin-bottom:10px}
+
+/* feature grid */
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:44px}
+.feat{background:var(--surface);padding:26px 24px 24px;min-width:0}
+.alt .feat{background:var(--bg)}
+.feat h3{font-size:1.06rem;font-weight:700}
+.feat p{color:var(--muted);font-size:.95rem;margin-top:8px}
+.feat .cmds{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+@media (max-width:900px){.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:600px){.grid3{grid-template-columns:1fr}}
+.spot{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:20px;margin-top:20px;align-items:start}
+.spot .pane{max-width:340px}
+@media (max-width:760px){.spot{grid-template-columns:1fr}.spot .pane{max-width:100%}}
+
+/* quantity band (always dark: the CAD / Excel desk) */
+.qty{background:var(--cad);color:var(--cad-ink);border:0}
+.qty .dim{color:var(--cad-accent)}
+.qty .sec-head p{color:var(--cad-muted)}
+.qty-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:48px;margin-top:44px;align-items:start}
+@media (max-width:860px){.qty-grid{grid-template-columns:1fr}}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:18px}
+.qlist li{display:grid;grid-template-columns:136px minmax(0,1fr);gap:4px 16px}
+.qlist .cmd{grid-row:span 2;align-self:start;justify-self:start;background:var(--cad-2);color:var(--cad-accent);border-color:var(--cad-line);font-size:13px;padding:4px 8px}
+@media (max-width:480px){.qlist li{grid-template-columns:1fr}.qlist .cmd{grid-row:auto}}
+.qlist b{font-weight:600}
+.qlist span{color:var(--cad-muted);font-size:.94rem}
+.sheet{background:#fff;color:#1d2733;border-radius:6px;overflow:hidden;font:13px/1.4 var(--f-cad);box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.sheet-tabs{display:flex;gap:2px;background:#e8ecee;padding:6px 6px 0;overflow-x:auto}
+.sheet-tabs span{padding:6px 12px;background:#d9dfe2;border-radius:4px 4px 0 0;white-space:nowrap;color:#4b5864}
+.sheet-tabs span.on{background:#fff;color:#1d2733;font-weight:600}
+.sheet-body{overflow-x:auto}
+.sheet table{border-collapse:collapse;width:100%;min-width:440px}
+.sheet th,.sheet td{border:1px solid #d5dde3;padding:6px 9px;text-align:left;white-space:nowrap}
+.sheet th{background:#eef3f6;font-weight:600}
+.sheet td.u{text-align:center;color:#56636e}
+.sheet td.f{font-family:var(--f-mono);font-size:12px;color:#2c5d88}
+.sheet tr.g td{background:#f7f9fa;font-weight:600}
+.sheet-note{padding:8px 12px;color:#56636e;font-size:12.5px;border-top:1px solid #d5dde3}
+
+/* library */
+.lib-feats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px 36px;margin-top:40px}
+.lib-feats h3{font-size:1rem}
+.lib-feats p{font-size:.94rem;color:var(--muted);margin-top:6px}
+@media (max-width:860px){.lib-feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:540px){.lib-feats{grid-template-columns:1fr}}
+.lib-tools{margin-top:48px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.search{flex:1 1 280px;display:flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:0 12px}
+.search input{flex:1;min-width:0;border:0;background:transparent;font:15px/1 var(--f-body);color:var(--ink);padding:12px 0;outline:none}
+.search:focus-within{border-color:var(--accent)}
+.search svg{width:18px;height:18px;color:var(--muted);flex:none}
+.count{font:14px/1 var(--f-cad);color:var(--muted)}
+.cats{display:flex;gap:8px;margin-top:14px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.cat{flex:none;font:500 14px/1 var(--f-cad);padding:9px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--ink);cursor:pointer;white-space:nowrap}
+.cat small{color:var(--muted);margin-left:5px;font-variant-numeric:tabular-nums}
+.cat[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.cat[aria-pressed="true"] small{color:inherit;opacity:.7}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;margin-top:22px}
+.card{display:flex;flex-direction:column;text-align:left;border:1px solid var(--line);border-radius:6px;background:var(--surface);padding:10px 10px 14px;cursor:pointer;font:inherit;color:inherit;min-width:0}
+.card:hover{border-color:var(--ink)}
+.card .pic{aspect-ratio:16/10;background:var(--paper);border:1px solid var(--paper-line);border-radius:3px;display:flex;align-items:center;justify-content:center;padding:10px;overflow:hidden}
+.card .pic img{max-height:100%;width:auto;object-fit:contain}
+.card .nm{font-weight:600;font-size:.98rem;margin-top:12px;padding-inline:4px;line-height:1.35}
+.card .mt{font:13.5px/1.35 var(--f-cad);color:var(--muted);margin-top:3px;padding-inline:4px}
+.card .mt b{color:var(--accent);font-weight:600}
+.more-row{display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap}
+.empty{padding:40px 0;color:var(--muted);text-align:center}
+.lib-foot{margin-top:36px;padding-top:20px;border-top:1px solid var(--line2);display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;color:var(--muted);font-size:.95rem}
+.lib-foot a{color:var(--accent);font-weight:600}
+
+dialog{border:0;padding:0;border-radius:8px;width:min(960px,calc(100vw - 32px));max-height:calc(100vh - 48px);background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(10,15,20,.6)}
+.dlg{display:flex;flex-direction:column;max-height:calc(100vh - 48px)}
+.dlg-head{display:flex;align-items:flex-start;gap:16px;padding:18px 20px;border-bottom:1px solid var(--line2)}
+.dlg-head h3{font-size:1.25rem}
+.dlg-head p{font:14px/1.4 var(--f-cad);color:var(--muted);margin-top:4px}
+.x{margin-left:auto;flex:none;width:36px;height:36px;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:20px;line-height:1;cursor:pointer}
+.dlg-body{overflow:auto;padding:20px;display:grid;gap:20px}
+.dlg-pic{background:var(--paper);border:1px solid var(--paper-line);border-radius:4px;padding:18px;display:flex;justify-content:center}
+.dlg-pic img{max-height:52vh;width:auto;object-fit:contain}
+.strip{background:var(--paper);border:1px solid var(--paper-line);border-radius:4px;padding:14px;overflow-x:auto}
+.strip img{max-width:none;height:110px;width:auto}
+.dlg h4{font:600 12.5px/1 var(--f-cad);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font:13.5px/1.2 var(--f-cad);padding:5px 9px;border-radius:4px;background:var(--bg);border:1px solid var(--line2)}
+.tag b{font-weight:600}
+.tag.flip{background:var(--accent-soft);border-color:transparent}
+
+/* start + license */
+.start{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:48px;margin-top:44px;align-items:start}
+@media (max-width:860px){.start{grid-template-columns:1fr}}
+.olist{list-style:none;margin:0;padding:0;counter-reset:o;display:grid;gap:22px}
+.olist li{counter-increment:o;display:grid;grid-template-columns:40px minmax(0,1fr);gap:2px 14px}
+.olist li::before{content:counter(o);grid-row:span 2;width:36px;height:36px;border:1.5px solid var(--ink);border-radius:50%;font:700 15px/33px var(--f-cad);text-align:center}
+.olist b{font-weight:600}
+.olist span{color:var(--muted);font-size:.96rem}
+.lic{border:1.5px solid var(--ink);border-radius:6px;background:var(--surface);padding:26px}
+.lic h3{font-size:1.2rem}
+.lic ul{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.lic li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;font-size:.96rem}
+.lic li::before{content:"";width:12px;height:7px;border-left:2px solid var(--accent);border-bottom:2px solid var(--accent);transform:rotate(-45deg);margin-top:7px}
+.lic .price{margin-top:20px;padding-top:16px;border-top:1px dashed var(--line);font:15px/1.5 var(--f-cad);color:var(--muted)}
+.lic .price b{display:block;font:800 1.5rem/1.2 var(--f-display);color:var(--ink)}
+.req{margin-top:20px;font:14px/1.5 var(--f-cad);color:var(--muted)}
+.dl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-top:12px}
+.dl .btn svg{width:18px;height:18px}
+.dl-meta{font:13px/1.4 var(--f-cad);color:var(--muted)}
+
+/* faq */
+.faq{margin-top:36px;border-top:1px solid var(--line);max-width:860px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{cursor:pointer;list-style:none;padding:18px 36px 18px 0;font-weight:600;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:6px;top:14px;font:400 24px/1 var(--f-body);color:var(--accent)}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 18px;color:var(--muted);max-width:70ch}
+
+/* contact */
+.contact{background:var(--accent);color:var(--accent-ink);padding-block:64px}
+.contact .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:32px;align-items:center}
+.contact h2{font-size:clamp(1.6rem,3vw,2.3rem);font-weight:800}
+.contact p{margin-top:10px;opacity:.88;max-width:52ch}
+.phone{background:var(--surface);color:var(--ink);border-radius:8px;padding:22px 24px}
+.phone small{font:600 12.5px/1 var(--f-cad);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.phone .num{display:block;font:800 clamp(1.7rem,3.4vw,2.2rem)/1.2 var(--f-display);font-variant-numeric:tabular-nums;margin-top:8px;user-select:all;letter-spacing:.01em}
+.phone .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.phone .note{font-size:13.5px;color:var(--muted);margin-top:10px;min-height:1.2em}
+@media (max-width:760px){.contact .wrap{grid-template-columns:1fr}}
+footer{padding-block:28px;color:var(--muted);font:14px/1.5 var(--f-cad)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="Dtool – về đầu trang">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="4" fill="var(--ink)"/><path d="M10 8h6a8 8 0 0 1 0 16h-6z" fill="none" stroke="var(--accent)" stroke-width="3"/></svg>
+      Dtool <small>cho AutoCAD</small>
+    </a>
+    <nav class="nav" aria-label="Mục chính">
+      <a href="#moi">Có gì mới</a>
+      <a href="#mbtd">Mặt bằng tự động</a>
+      <a href="#kien-truc">Kiến trúc</a>
+      <a href="#ket-cau">Kết cấu</a>
+      <a href="#thu-vien">Thư viện block</a>
+      <a href="#bat-dau">Bản quyền</a>
+      <a href="#hoi-dap">Hỏi đáp</a>
+    </nav>
+    <div class="top-acts">
+      <a class="btn btn-ghost app-btn" href="/app/" aria-label="Mở app MBTD trên điện thoại"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10.5 18.2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span class="l">App điện thoại</span><span class="s">App</span></a>
+      <a class="btn btn-primary" href="#bat-dau">Dùng thử 7 ngày</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">Add-in AutoCAD 2021–2024 · giao diện tiếng Việt</div>
+      <h1>Từ khung lô đất đến bộ hồ sơ, <em>ngay trong AutoCAD</em></h1>
+      <p class="lead">Dtool giúp kiến trúc sư và kỹ sư kết cấu vẽ nhà ở nhanh hơn: tự dựng mặt bằng nhà phố, tường và cửa tự cắt, bố trí nội thất, mặt cắt, mặt đứng tự cập nhật, chi tiết cốt thép và khối lượng ra Excel. Kèm thư viện <span data-stat="blocks">249</span> block động tự dựng.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#bat-dau">Tải bản dùng thử</a>
+        <a class="btn btn-ghost" href="#thu-vien">Xem thư viện block</a>
+        <a class="btn btn-ghost app-btn" href="/app/"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10.5 18.2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Mở app điện thoại</a>
+      </div>
+      <div class="cmdline" aria-label="Ví dụ dòng lệnh AutoCAD">
+        <div><span class="p">Command:</span> <span class="k">MBTD</span></div>
+        <div><span class="p">Chọn khung lô đất, cạnh mặt tiền…</span></div>
+        <div>Phương án 1/12 · Mẫu E: thang U + WC cạnh thang<span class="caret" aria-hidden="true"></span></div>
+      </div>
+    </div>
+    <figure style="margin:0">
+      <div class="cadwin">
+        <div class="cadwin-bar"><i></i><i></i><i></i><b>Dtool – Xem trước</b>· khung kéo thả MBTD</div>
+        <img src="assets/shots/mbtd-khung.webp" width="1265" height="605" alt="Khung kéo thả của lệnh MBTD: năm tầng nhà phố có thang bộ bao quanh thang máy, phòng ngủ với giường, tủ áo, bàn học, phòng khách có sofa, đường mặt cắt A-A và B-B">
+      </div>
+      <figcaption class="figcap">Khung kéo thả: phòng, thang, cửa, đồ nội thất hiện đúng hình block thư viện; đặt mặt cắt rồi vẽ thẳng vào bản vẽ.</figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="stats" aria-label="Con số">
+  <div class="wrap">
+    <div class="stat"><b data-stat="blocks">249</b><span>block động</span></div>
+    <div class="stat"><b data-stat="states">1.742</b><span>hình chiếu và trạng thái</span></div>
+    <div class="stat"><b data-stat="styles">253</b><span>kiểu dáng chọn nhanh</span></div>
+    <div class="stat"><b>190+</b><span>lệnh kiến trúc, kết cấu</span></div>
+    <div class="stat"><b>7 ngày</b><span>dùng thử đủ mọi lệnh</span></div>
+  </div>
+</div>
+
+<section id="moi" class="news" aria-labelledby="moi-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="dim"><span class="rule"></span><span>Cập nhật tháng 10/2026</span><span class="rule"></span></div>
+      <h2 id="moi-h">Mới trong Dtool 2.3.45 – 2.3.49</h2>
+    </div>
+    <div class="grid3">
+      <div class="feat"><span class="ver">2.3.49</span><h3>Đồ nội thất hình thật trong khung kéo thả</h3><p>Giường có gối, chăn; sofa có đệm; tủ áo, bếp, bồn cầu, lavabo hiện đúng hình mặt bằng của block thư viện, co giãn theo kích thước. Hàng chọn đồ có hình nhỏ từng món.</p></div>
+      <div class="feat"><span class="ver">2.3.48</span><h3>Mặt cắt có cấu tạo sàn</h3><p>Vữa cán nền + gạch lát, phòng ngủ sàn gỗ, sân thượng lát gạch; tự ghi chú "CẤU TẠO SÀN". Thêm mặt cắt thủ công <kbd>MBTDMC</kbd>, DIM tổng nằm ngoài cùng.</p></div>
+      <div class="feat"><span class="ver">2.3.48</span><h3>Bếp chữ L, đảo bếp, sao chép đồ</h3><p>Khung kéo thả có tủ bếp chữ L, đảo bếp kèm ghế bar, tủ bếp cao. Kéo cạnh một món để đổi kích thước, giữ Ctrl khi kéo để sao chép sang phòng hoặc tầng khác.</p></div>
+      <div class="feat"><span class="ver">2.3.47</span><h3>Thư viện tô màu vật liệu</h3><p>Nhôm, kính, gỗ, vải, sứ, inox hiện màu trên màn hình. Lớp màu không in, nên in monochrome.ctb vẫn sạch; kính có vệt chéo cả khi in.</p></div>
+      <div class="feat"><span class="ver">2.3.47</span><h3>Mặt cắt qua cửa đúng tiết diện</h3><p>Chỗ cắt qua cửa đi, cửa sổ vẽ khuôn, cánh, kính, ngưỡng, bậu theo hình mặt cắt của block. Đồ phía trước che đồ phía sau, bê tông tô đặc.</p></div>
+      <div class="feat"><span class="ver">2.3.45 – 46</span><h3>Mặt đứng tự động và tam cấp</h3><p>Vẽ mặt tiền, mặt sau hoặc cả 4 mặt theo mặt bằng từng tầng. Tam cấp trước cửa chính hiện trên mặt bằng, mặt cắt và mặt đứng.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="mbtd">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="dim"><span class="rule"></span><span>Nhóm Thiết kế · lệnh MBTD</span><span class="rule"></span></div>
+      <h2>Mặt bằng tự động cho nhà phố Việt Nam</h2>
+      <p>Nhập lô đất, số tầng và công năng từng tầng. Dtool dựng các phương án theo 8 mẫu nhà phố thực tế, rồi vẽ bằng chính đối tượng Dtool: tường, cửa, thang, nội thất đều sửa tiếp được như bản vẽ tay.</p>
+    </div>
+    <ol class="steps">
+      <li><h3>Chọn khung lô đất</h3><p>Chọn polyline lô và cạnh mặt tiền. Lô méo lấy hình chữ nhật lớn nhất bên trong.</p></li>
+      <li><h3>Khai báo công trình</h3><p>Số tầng, tum, cao tầng, thang bộ, thang máy, phòng khách, bếp, số phòng ngủ, WC, thờ, giặt phơi, sân thượng.</p></li>
+      <li><h3>Chọn phương án</h3><p>Lật qua các phương án máy đề xuất, hoặc mở khung kéo thả để tự bố trí mô-đun.</p></li>
+      <li><h3>Vẽ vào bản vẽ</h3><p>Tường, cửa thư viện, thang, cột, nhãn phòng, nội thất, DIM, trục, mặt cắt có cấu tạo sàn, mặt đứng.</p></li>
+    </ol>
+    <div class="shots">
+      <figure>
+        <div class="cadwin"><div class="cadwin-bar"><i></i><i></i><i></i><b>Phương án máy đề xuất</b></div>
+        <img src="assets/shots/mbtd-mau-e.webp" width="529" height="390" loading="lazy" alt="Phương án 1/12, mẫu E: bốn mặt bằng tầng 1, 2, 3 và tum với thang chữ U, WC cạnh thang, phòng ngủ, ban công, sân phơi"></div>
+        <figcaption class="figcap">Mẫu E: thang U, WC cạnh thang, hành lang một bên.</figcaption>
+      </figure>
+      <figure>
+        <div class="cadwin"><div class="cadwin-bar"><i></i><i></i><i></i><b>Nhà có thang máy</b></div>
+        <img src="assets/shots/mbtd-mau-c.webp" width="529" height="364" loading="lazy" alt="Phương án mẫu C: năm tầng với thang chữ U quay ngang, hai WC kẹp thang và thang máy cạnh thang"></div>
+        <figcaption class="figcap">Mẫu C: thang U quay ngang, 2 WC kẹp thang, thang máy cạnh thang.</figcaption>
+      </figure>
+      <figure class="wide">
+        <div class="cadwin"><div class="cadwin-bar"><i></i><i></i><i></i><b>Tự bố trí</b>· đồ nội thất của phòng ngủ 2</div>
+        <img src="assets/shots/mbtd-noi-that.webp" width="1300" height="720" loading="lazy" alt="Khung kéo thả đang chọn phòng ngủ 2: hàng trên là giường đôi, giường đơn, tủ áo, tab, bàn học, tivi, kệ sách có hình nhỏ; bên dưới năm tầng nhà với thang quanh thang máy và đường mặt cắt"></div>
+        <figcaption class="figcap">Bấm vào một phòng, hàng trên đổi thành đồ của phòng đó. Kéo thả vào phòng, kéo cạnh đổi kích thước, Ctrl + kéo để sao chép, phím R xoay. Bố trí lưu ra file .mbtd.</figcaption>
+      </figure>
+    </div>
+    <h3 class="sub-h">Bản vẽ Dtool vẽ ra</h3>
+    <div class="cad-out">
+      <figure class="paper-fig">
+        <div class="paper"><img src="assets/shots/cad-mat-bang.webp" width="1079" height="694" loading="lazy" alt="Mặt bằng tầng 1 và tầng 2 do MBTD vẽ: lưới trục 1 đến 5, DIM, ký hiệu mặt cắt A, B, C, bếp, phòng khách, phòng ngủ, WC, thang quanh thang máy, tam cấp"></div>
+        <figcaption class="figcap">Mặt bằng tầng 1, 2: trục, DIM, ký hiệu mặt cắt, cửa và nội thất từ thư viện.</figcaption>
+      </figure>
+      <figure class="paper-fig">
+        <div class="paper"><img src="assets/shots/cad-mat-cat.webp" width="700" height="699" loading="lazy" alt="Mặt cắt A-A năm tầng: cao độ từng sàn, cửa nhôm kính, WC, giường, bàn ăn, sofa, thang máy với hố pit sâu 1,2 m"></div>
+        <figcaption class="figcap">Mặt cắt A-A: cao độ, cửa, đồ nội thất, hố pit thang máy.</figcaption>
+      </figure>
+      <figure class="paper-fig wide">
+        <div class="paper"><img src="assets/shots/cad-cau-tao-san.webp" width="1400" height="427" loading="lazy" alt="Ghi chú cấu tạo sàn trên mặt cắt: lát gạch 600x600 dày 10, sàn gỗ dày 12 cho phòng ngủ, vữa xi măng cán nền dày 40, sàn BTCT dày 120"></div>
+        <figcaption class="figcap">Ghi chú cấu tạo sàn tự sinh theo hoàn thiện từng phòng.</figcaption>
+      </figure>
+    </div>
+    <div class="two">
+      <div>
+        <h3>8 mẫu lõi nhà phố</h3>
+        <dl class="tpl">
+          <dt>A</dt><dd><b>Thang cuối nhà</b>, mọi phòng phía trước; lô ngắn 8–15 m.</dd>
+          <dt>B</dt><dd><b>Thang U giữa nhà + giếng trời</b>; lô 3–5 m, sâu từ 10,5 m.</dd>
+          <dt>C</dt><dd><b>Thang U quay ngang</b>, 2 WC kẹp thang, chiếm ít chiều sâu.</dd>
+          <dt>D</dt><dd><b>Thang bộ cạnh thang máy</b>, sảnh giữa.</dd>
+          <dt>E</dt><dd><b>3 phòng ngủ</b>, hành lang một bên; lô từ 4,7 × 14 m.</dd>
+          <dt>F</dt><dd><b>Thang thẳng dọc tường + giếng trời</b>; lô dài, kể cả 3–3,5 m.</dd>
+          <dt>G</dt><dd><b>Thang bộ bao quanh thang máy</b>; lòng nhà từ 4,5 m.</dd>
+          <dt>H</dt><dd><b>Thang U cạnh phòng</b>; lô nông đến 15 m.</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>Vẽ ra bản vẽ</h3>
+        <div class="chips">
+          <span class="chip">Tường có sẵn thông tin khối lượng</span>
+          <span class="chip">Cửa đi, cửa sổ từ thư viện</span>
+          <span class="chip">Cầu thang 7 kiểu</span>
+          <span class="chip">Thang máy + hố pit</span>
+          <span class="chip">Cột BTCT thẳng trục mọi tầng</span>
+          <span class="chip">Nội thất từng phòng</span>
+          <span class="chip">Nhãn phòng, diện tích</span>
+          <span class="chip">DIM mặt bằng, lưới trục</span>
+          <span class="chip">1–4 mặt cắt tự đặt + mặt cắt thủ công</span>
+          <span class="chip">Cấu tạo sàn trên mặt cắt</span>
+          <span class="chip">Cửa bị cắt đúng tiết diện</span>
+          <span class="chip">Mặt đứng 1, 2 hoặc 4 mặt</span>
+          <span class="chip">Tam cấp trước cửa chính</span>
+          <span class="chip">Khai báo tầng (TANG)</span>
+        </div>
+        <p class="figcap" style="margin-top:16px">Phòng được kiểm tra theo kích thước tối thiểu (TCVN 4451 và nhà phố thực tế), lối đi tới mọi phòng, cửa sổ cho phòng ở, WC thẳng trục giữa các tầng.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="app" class="app-sec" aria-labelledby="app-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="dim"><span class="rule"></span><span>App điện thoại · dtool.vn/app</span><span class="rule"></span></div>
+      <h2 id="app-h">Vẽ mặt bằng ngay trên điện thoại</h2>
+      <p>App MBTD chạy trong trình duyệt, cài được ra màn hình chính và dùng cả khi không có mạng. Gặp khách hay khảo sát nhà cũ: kéo thả phương án, đo hiện trạng, xem 3D tại chỗ, rồi gửi file .mbtd về máy tính để Dtool vẽ triển khai trên AutoCAD hoặc dựng phối cảnh trong SketchUp.</p>
+    </div>
+    <div class="app-grid">
+      <div>
+        <div class="chips">
+          <span class="chip">Kéo thả phòng, thang, cửa từng tầng</span>
+          <span class="chip">Nội thất hình thật, ghế tự xếp theo bàn</span>
+          <span class="chip">Đo hiện trạng: chạm điểm trên lưới</span>
+          <span class="chip">Sửa số đo ngay trên hình</span>
+          <span class="chip">Lô méo: 4 cạnh + đường chéo</span>
+          <span class="chip">Ảnh, vết nứt, cốt nền tại công trình</span>
+          <span class="chip">Xem 3D từng tầng</span>
+          <span class="chip">Gửi file .mbtd qua Zalo, Drive</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary app-btn" href="/app/"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10.5 18.2h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Mở app MBTD</a>
+          <span class="app-url">dtool.vn/app</span>
+        </div>
+      </div>
+      <div>
+        <h3>Cài ra màn hình chính</h3>
+        <ol class="app-steps">
+          <li><b>Android (Chrome):</b> mở dtool.vn/app → menu ⋮ → <i>Cài đặt ứng dụng</i>.</li>
+          <li><b>iPhone (Safari):</b> mở dtool.vn/app → nút Chia sẻ → <i>Thêm vào MH chính</i>.</li>
+          <li>Mở bằng biểu tượng <b>MBTD</b>: toàn màn hình, không có thanh địa chỉ, tự nhận bản mới.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="kien-truc" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="dim"><span class="rule"></span><span>Tab Kiến Trúc</span><span class="rule"></span></div>
+      <h2>Bản vẽ kiến trúc tự liên kết với nhau</h2>
+      <p>Tường, cửa, phòng, mặt cắt và khối lượng cùng đọc một mô hình. Sửa mặt bằng thì phần liên quan tự cập nhật, không phải vẽ lại từng tờ.</p>
+    </div>
+    <div class="grid3">
+      <div class="feat"><h3>Tường, cột, lưới trục</h3><p>Vẽ tường theo nét hoặc theo trục, tự hatch, trừ cột. Co kéo tường như STRETCH, hatch và vữa trát chạy theo. Tường mang sẵn chiều cao, tầng, vật liệu để tính khối lượng.</p><div class="cmds"><kbd>TUONG</kbd><kbd>TUONGT</kbd><kbd>KEOTUONG</kbd><kbd>COT</kbd><kbd>LUOIKT</kbd></div></div>
+      <div class="feat"><h3>Cửa tự cắt tường</h3><p>Chọn mẫu trên bảng Cửa, bấm vào mép tường là đặt. Dời, chép, kéo grip, xóa cửa thì tường tự cắt lại; dày tường tự đo tại điểm bấm.</p><div class="cmds"><kbd>CDI</kbd><kbd>CSO</kbd><kbd>DCUA</kbd><kbd>BCUA</kbd></div></div>
+      <div class="feat"><h3>Bố trí nội thất tự động</h3><p>Đo phòng, cửa đi, cửa sổ rồi đưa ra nhiều cách bố trí đủ lối đi. Giữ mẫu hoặc giữ vị trí món đã ưng, bấm Tiếp để xem cách khác.</p><div class="cmds"><kbd>BTPN</kbd><kbd>BTKHACH</kbd><kbd>BTBEP</kbd><kbd>BTAN</kbd><kbd>BTWC</kbd></div></div>
+      <div class="feat"><h3>Mặt cắt, mặt đứng liên kết</h3><p>Vẽ từ mặt bằng: cửa bị cắt đúng tiết diện khuôn, cánh, kính; đồ nội thất lấy đúng hình chiếu của block; có lớp hoàn thiện sàn, hố pit thang máy. Sửa mặt bằng thì mặt cắt, mặt đứng tự vẽ lại.</p><div class="cmds"><kbd>MCAT</kbd><kbd>MDUNG</kbd><kbd>CNMC</kbd><kbd>SCT</kbd></div></div>
+      <div class="feat"><h3>Cầu thang</h3><p>Một vế, hai vế, chữ L, chữ U, ba vế, quanh thang máy, thang tròn. Số bậc theo cao tầng, có mặt bằng và mặt cắt.</p><div class="cmds"><kbd>THANG</kbd></div></div>
+      <div class="feat"><h3>Phòng, sàn, trần</h3><p>Nhãn phòng có diện tích, lát sàn theo viên gạch, mặt bằng trần, rải đèn, len và ốp tường.</p><div class="cmds"><kbd>PHONG</kbd><kbd>LSAN</kbd><kbd>TRAN</kbd><kbd>DEN</kbd><kbd>OPLEN</kbd></div></div>
+      <div class="feat"><h3>Chi tiết</h3><p>Trích chi tiết có DIM tự động, chi tiết WC nhận đúng thiết bị trong phòng, chi tiết bể phốt, bể nước.</p><div class="cmds"><kbd>TCT</kbd><kbd>DIMCT</kbd><kbd>CTWC</kbd><kbd>CTBP</kbd><kbd>CTBN</kbd></div></div>
+      <div class="feat"><h3>DIM và bảng thống kê</h3><p>DIM mặt bằng nhận trục, tường, ô cửa. Bảng diện tích, bảng cửa, bảng hoàn thiện, bảng lát sàn, đếm thiết bị.</p><div class="cmds"><kbd>DIMMB</kbd><kbd>BDT</kbd><kbd>BHT</kbd><kbd>BSAN</kbd><kbd>DEMTB</kbd></div></div>
+      <div class="feat"><h3>Bảng làm việc từng nhóm</h3><p>Mỗi nhóm Ribbon có một bảng gắn cạnh màn hình: thông số, hình xem trước, nút lệnh. Chuẩn layer TCVN, khung tên, xuất PDF.</p><div class="cmds"><kbd>BLV</kbd><kbd>CHUAN</kbd><kbd>KTEN</kbd><kbd>XPDF</kbd></div></div>
+    </div>
+    <div class="spot">
+      <figure style="margin:0">
+        <div class="cadwin"><div class="cadwin-bar"><i></i><i></i><i></i><b>Bố trí nội thất</b>· phòng ngủ 3,6 × 4,2 m</div>
+        <img src="assets/shots/noi-that-pn.webp" width="560" height="400" loading="lazy" alt="Xem trước bố trí phòng ngủ 3,6 × 4,2 m: giường đôi giữ vị trí, tủ áo, bàn học, tab đầu giường, cửa đi"></div>
+        <figcaption class="figcap">Cách đặt 2/10: giường đã khóa vị trí (cam), các món còn lại đổi khi bấm Tiếp.</figcaption>
+      </figure>
+      <figure style="margin:0" class="pane">
+        <div class="cadwin"><img src="assets/shots/bang-cua.webp" width="404" height="812" loading="lazy" alt="Bảng Cửa của Dtool: chọn mẫu cửa block động, hình thể hiện, xem trước, rộng, cao, dày tường, nút Đặt vào tường"></div>
+        <figcaption class="figcap">Bảng Cửa: chọn mẫu, xem trước, đặt vào tường.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="ket-cau">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="dim"><span class="rule"></span><span>Tab Kết Cấu</span><span class="rule"></span></div>
+      <h2>Kết cấu từ móng đến mái, có chi tiết cốt thép</h2>
+      <p>Khai báo cấu kiện trong hộp thoại, đặt lên lưới trục, chèn chi tiết và bảng thép. Sửa thông số thì ký hiệu, chi tiết, bảng thép đã vẽ tự vẽ lại; dữ liệu lưu ngay trong file DWG.</p>
+    </div>
+    <div class="grid3">
+      <div class="feat"><h3>Móng</h3><p>Móng đơn, móng băng, móng cọc, giằng móng, cọc BTCT. Vẽ nhanh mặt bằng móng theo lưới trục, móng lệch tâm, tự cắt nét chỗ móng băng giao nhau.</p><div class="cmds"><kbd>QLM</kbd><kbd>MBM</kbd><kbd>DM</kbd><kbd>MBA</kbd><kbd>GM</kbd><kbd>CTM</kbd></div></div>
+      <div class="feat"><h3>Dầm</h3><p>Nhiều nhịp, công xôn, chiều cao đổi theo nhịp. Khai triển 1:25, mặt cắt gối và nhịp 1:10, tự nhận dầm biên, dầm giữa.</p><div class="cmds"><kbd>QLD</kbd><kbd>MBD</kbd><kbd>DD</kbd><kbd>CTD</kbd></div></div>
+      <div class="feat"><h3>Cột, sàn, vách, thang, bể</h3><p>Cột nhiều tầng, sàn tự nhận ô từ dầm bao quanh, vách, lanh tô, ô văng, thang bộ, bể nước, bể phốt BTCT.</p><div class="cmds"><kbd>QLTH</kbd><kbd>SANTD</kbd><kbd>QLC</kbd><kbd>QLTB</kbd><kbd>QLBE</kbd></div></div>
+      <div class="feat"><h3>Cốt thép theo TCVN 5574:2018</h3><p>Neo, nối chồng, lớp bảo vệ theo tiêu chuẩn. Ghi chú thép kiểu bản vẽ thực tế, bảng thống kê thép chèn thẳng vào bản vẽ.</p><div class="cmds"><kbd>TKM</kbd><kbd>TKD</kbd><kbd>TKTH</kbd></div></div>
+      <div class="feat"><h3>Hồ sơ và in bộ</h3><p>Khai báo tầng, dàn trang A3, A2, A1 có số hiệu tờ, in cả bộ ra một file PDF nhiều trang.</p><div class="cmds"><kbd>TANG</kbd><kbd>DTR</kbd><kbd>INBO</kbd></div></div>
+      <div class="feat"><h3>Rà lỗi trước khi phát hành</h3><p>Tên cấu kiện trùng, chi tiết cũ hơn thông số, cấu kiện đã đặt chưa vẽ chi tiết, dầm có gối không có cột. Bấm đúp để phóng tới chỗ lỗi.</p><div class="cmds"><kbd>RALOI</kbd><kbd>CN</kbd></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="qty" aria-labelledby="qty-h">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="dim"><span class="rule"></span><span>Khối lượng → Excel</span><span class="rule"></span></div>
+      <h2 id="qty-h">Khối lượng đếm từ chính bản vẽ</h2>
+      <p>Số lượng lấy theo cấu kiện đã đặt và tường, cửa, phòng đã vẽ. Xuất Excel theo một mẫu biểu chung, có công thức, tách theo tầng; ghi đè file cũ khi cập nhật.</p>
+    </div>
+    <div class="qty-grid">
+      <ul class="qlist">
+        <li><span class="cmd">KLM · KLD · KLTH</span><b>Kết cấu</b><span>Bê tông lót, bê tông, ván khuôn từng loại cấu kiện, cốt thép theo nhóm đường kính; trừ chỗ dầm giao nhau.</span></li>
+        <li><span class="cmd">KLKT</span><b>Kiến trúc</b><span>Xây tường (cả tường xiên), trát, sơn trong và ngoài, lát sàn theo gạch đã vẽ, ốp, cửa.</span></li>
+        <li><span class="cmd">KLDT</span><b>Dự toán</b><span>Gộp kết cấu và kiến trúc theo mẫu bảng tiên lượng Dự toán Eta, mã định mức sửa được.</span></li>
+        <li><span class="cmd">CATTHEP</span><b>Cắt thép tối ưu</b><span>Xếp đoạn thép vào cây 11,7 m theo từng đường kính, ít hao hụt.</span></li>
+      </ul>
+      <div class="sheet" role="img" aria-label="Minh họa cấu trúc file Excel khối lượng: ba sheet Tổng hợp, KL chi tiết, Thống kê thép">
+        <div class="sheet-tabs"><span class="on">Tổng hợp</span><span>KL chi tiết</span><span>Thống kê thép</span></div>
+        <div class="sheet-body">
+          <table>
+            <thead><tr><th>STT</th><th>Nội dung công việc</th><th>Đơn vị</th><th>Khối lượng</th></tr></thead>
+            <tbody>
+              <tr class="g"><td>A</td><td>PHẦN MÓNG</td><td></td><td></td></tr>
+              <tr><td>1</td><td>Bê tông lót móng</td><td class="u">m³</td><td class="f">=SUMIF(…)</td></tr>
+              <tr><td>2</td><td>Bê tông móng</td><td class="u">m³</td><td class="f">=SUMIF(…)</td></tr>
+              <tr><td>3</td><td>Ván khuôn móng</td><td class="u">m²</td><td class="f">=SUMIF(…)</td></tr>
+              <tr><td>4</td><td>Cốt thép móng Ø ≤ 10</td><td class="u">tấn</td><td class="f">=SUMIFS(…)</td></tr>
+              <tr class="g"><td>B</td><td>PHẦN KIẾN TRÚC</td><td></td><td></td></tr>
+              <tr><td>1</td><td>Xây tường gạch 110</td><td class="u">m³</td><td class="f">=SUMIF(…)</td></tr>
+              <tr><td>2</td><td>Trát tường trong</td><td class="u">m²</td><td class="f">=SUMIF(…)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="sheet-note">Minh họa bố cục sheet. Số liệu điền từ bản vẽ khi chạy lệnh.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="thu-vien">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="dim"><span class="rule"></span><span>Thư viện block động</span><span class="rule"></span></div>
+      <h2><span data-stat="blocks">249</span> block động vẽ cho nhà ở Việt Nam</h2>
+      <p>Mỗi block là sản phẩm phổ biến ở nhà phố, biệt thự: cửa nhôm kính, cửa cuốn, bộ bàn ghế gỗ, bàn thờ theo cỡ Lỗ Ban, xí xổm, máy lọc nước. Đủ hình chiếu trong một block, kéo grip đổi kích thước.</p>
+    </div>
+    <div class="lib-feats">
+      <div><h3>Đủ hình chiếu trong một block</h3><p>Mặt bằng, mặt đứng, mặt cắt hoặc mặt bên nằm chung một block. Đổi bằng ô Hình chiếu, không phải chèn block khác.</p></div>
+      <div><h3>Kéo grip đổi kích thước</h3><p>Rộng, cao, sâu, dày tường, số cánh chỉnh bằng grip hoặc Properties. Mỗi hình chiếu chỉ hiện grip của nó, nút chọn hình chiếu nằm sát block.</p></div>
+      <div><h3>Màu vật liệu, in vẫn sạch</h3><p>Nhôm, kính, gỗ, vải, sứ, inox hiện màu trên màn hình nhưng không in; in monochrome.ctb không ra mảng đen. Ba cấp độ dày nét, kính có vệt chéo, mặt cắt tô đặc hoặc gạch vật liệu.</p></div>
+      <div><h3>Chi tiết như sản phẩm thật</h3><p>Khóa và tay nắm trên mọi cửa đi, bản lề, đường may, nút chần, vân gỗ, gạch ốp, đồ trang trí nhỏ.</p></div>
+      <div><h3>Bộ sưu tập kiểu</h3><p>Giường, tủ áo, sofa, bàn ghế, tủ bếp, tivi theo cỡ màn hình, thiết bị vệ sinh, đèn có nhiều kiểu trong cùng block; đổi kiểu, kích thước giữ nguyên.</p></div>
+      <div><h3>Gắn liền với lệnh Dtool</h3><p>Cửa tự cắt tường, bố trí nội thất theo kích thước phòng, mặt cắt và mặt đứng tự lấy đúng hình chiếu của block.</p></div>
+    </div>
+
+    <div class="lib-tools">
+      <label class="search" for="q">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Tìm block: sofa, cửa cuốn, lavabo, bàn thờ…" autocomplete="off" aria-label="Tìm block">
+      </label>
+      <span class="count" id="count" aria-live="polite"></span>
+    </div>
+    <div class="cats" id="cats" role="group" aria-label="Lọc theo nhóm"></div>
+    <div class="gallery" id="gallery"></div>
+    <div class="more-row"><button class="btn btn-ghost" id="more" type="button" hidden>Hiện thêm</button></div>
+    <div class="lib-foot">
+      <span>Ảnh chụp từ chính block trong thư viện, màu vật liệu như trên màn hình AutoCAD. Bấm vào một block để xem đủ hình chiếu, kiểu dáng và thông số.</span>
+      <a href="catalogue-thu-vien-block-dtool.pdf" target="_blank" rel="noopener">Catalogue PDF đầy đủ ↗</a>
+    </div>
+  </div>
+</section>
+
+<section id="bat-dau" class="alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="dim"><span class="rule"></span><span>Cài đặt &amp; bản quyền</span><span class="rule"></span></div>
+      <h2>Cài trong vài phút, dùng thử đủ lệnh</h2>
+      <p>Bộ cài theo tài khoản Windows, không cần quyền quản trị. Lần đầu nạp trên một máy được dùng thử 7 ngày, đủ mọi lệnh.</p>
+    </div>
+    <div class="start">
+      <ol class="olist">
+        <li><b>Tải bộ cài</b><span>File zip bản mới nhất. Bản cũ đang dùng cũng cập nhật bằng cách này, giữ nguyên kích hoạt.<span class="dl"><!--SETUP--><a class="btn btn-primary" href="/tai/Dtool_CaiDat_2.3.60.zip" download><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Tải Dtool 2.3.60</a><span class="dl-meta">zip 58 MB · 06/10/2026</span><!--/SETUP--></span></span></li>
+        <li><b>Giải nén, đóng AutoCAD, chạy CaiDat.bat</b><span>Mở lại AutoCAD: Ribbon có tab Kết Cấu và Kiến Trúc, thêm menu Dtool trên thanh menu. Gõ <kbd>LENH</kbd> để xem danh sách lệnh.</span></li>
+        <li><b>Dùng thử 7 ngày</b><span>Dòng lệnh báo số ngày còn lại mỗi lần mở AutoCAD.</span></li>
+        <li><b>Kích hoạt</b><span>Gõ <kbd>BQ</kbd>, sao chép mã máy gửi qua Zalo, dán mã kích hoạt nhận được là xong.</span></li>
+      </ol>
+      <div class="lic">
+        <h3>Bản quyền theo máy</h3>
+        <ul>
+          <li>Mỗi mã kích hoạt dùng cho một máy, vĩnh viễn hoặc theo thời hạn.</li>
+          <li>Gỡ và cài lại Dtool không mất kích hoạt.</li>
+          <li>Thư viện block đi kèm bản quyền, mở được trên máy đã kích hoạt hoặc còn hạn dùng thử.</li>
+          <li>Bộ cài có hướng dẫn sử dụng và bảng Excel danh sách lệnh theo việc.</li>
+        </ul>
+        <div class="price"><b>Liên hệ báo giá</b>Zalo / điện thoại 0937 142 789</div>
+      </div>
+    </div>
+    <p class="req">Yêu cầu: Windows, AutoCAD 2021–2024 bản đầy đủ. Đơn vị bản vẽ mm.</p>
+  </div>
+</section>
+
+<section id="hoi-dap">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="dim"><span class="rule"></span><span>Hỏi đáp</span><span class="rule"></span></div>
+      <h2>Câu hỏi thường gặp</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Dtool chạy trên phiên bản AutoCAD nào?</summary><p>AutoCAD 2021, 2022, 2023, 2024 bản đầy đủ trên Windows. AutoCAD LT không nạp được add-in .NET nên không dùng được Dtool.</p></details>
+      <details><summary>Dùng thử có bị giới hạn lệnh không?</summary><p>Không. Trong 7 ngày dùng thử mọi lệnh và cả thư viện block đều mở. Hết hạn, các lệnh báo cần bản quyền và mở hộp kích hoạt; bản vẽ đã làm vẫn mở bình thường.</p></details>
+      <details><summary>Cài lại Windows thì có mất bản quyền không?</summary><p>Cài lại Windows hoặc thay ổ đĩa cài Windows làm mã máy đổi. Anh chị gửi mã máy mới qua Zalo để nhận mã kích hoạt mới. Gỡ hay cài lại Dtool thì không mất kích hoạt.</p></details>
+      <details><summary>In bằng monochrome.ctb có bị mảng đen không?</summary><p>Không. Block che nền bằng WIPEOUT thay cho hatch đặc, màu vật liệu nằm trên layer DTOOL-TOMAU không in, nên in đen trắng chỉ ra nét và vệt kính. Muốn in nền xám thì bật in cho layer đó. Nét chia ba cấp độ dày: đường bao, chi tiết, nét mảnh.</p></details>
+      <details><summary>Bản vẽ cũ có nhận thư viện mới không?</summary><p>Có. Gõ <kbd>CNTV</kbd> để các block thư viện đã chèn trong bản vẽ cập nhật theo bản mới (màu vật liệu, chi tiết), thông số đã đặt giữ nguyên.</p></details>
+      <details><summary>Block chèn vào bản vẽ có sửa được bằng AutoCAD thường không?</summary><p>Được. Đây là block động AutoCAD chuẩn: đổi hình chiếu, kéo grip, sửa thông số trong Properties như mọi block động khác, mở trên máy không cài Dtool vẫn xem và in được.</p></details>
+      <details><summary>Có tài liệu hướng dẫn không?</summary><p>Bộ cài kèm hướng dẫn sử dụng và file Excel danh sách lệnh, hướng dẫn nhanh theo việc. Trong AutoCAD gõ <kbd>LENH</kbd>, rê chuột lên nút Ribbon để xem tên lệnh. Cần hỗ trợ, nhắn Zalo.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<section class="contact" id="lien-he">
+  <div class="wrap">
+    <div>
+      <h2>Nhận bản dùng thử Dtool</h2>
+      <p>Tải bộ cài ở mục <a href="#bat-dau">Cài đặt</a>, dùng thử 7 ngày đủ mọi lệnh. Nhắn Zalo hoặc gọi để nhận báo giá, mã kích hoạt và hướng dẫn.</p>
+    </div>
+    <div class="phone">
+      <small>Zalo / điện thoại</small>
+      <span class="num" id="phone">0937 142 789</span>
+      <div class="row">
+        <a class="btn btn-primary" href="https://zalo.me/0937142789" target="_blank" rel="noopener">Mở Zalo</a>
+        <button class="btn btn-ghost" type="button" id="copy">Sao chép số</button>
+      </div>
+      <div class="note" id="copy-note" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Dtool · add-in AutoCAD vẽ nhanh kiến trúc và kết cấu</span>
+    <span><!--SETUPVER-->Phiên bản 2.3.60 · cập nhật 06/10/2026<!--/SETUPVER--> · © 2026 Dtool</span>
+  </div>
+</footer>
+
+<dialog id="dlg" aria-labelledby="dlg-title">
+  <div class="dlg">
+    <div class="dlg-head">
+      <div><h3 id="dlg-title"></h3><p id="dlg-sub"></p></div>
+      <button class="x" type="button" id="dlg-x" aria-label="Đóng">×</button>
+    </div>
+    <div class="dlg-body" id="dlg-body"></div>
+  </div>
+</dialog>
+
+<script src="assets/blocks.js"></script>
+<script>
+(function(){
+  var L = window.DTOOL_LIB;
+  var fmt = function(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "."); };
+  var esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
+  var fold = function(s){ return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[đĐ]/g, "d").toLowerCase(); };
+
+  // copy phone
+  var copyBtn = document.getElementById("copy"), note = document.getElementById("copy-note");
+  copyBtn.addEventListener("click", function(){
+    var num = "0937142789";
+    var done = function(){ note.textContent = "Đã sao chép số 0937 142 789."; };
+    var fallback = function(){
+      var r = document.createRange(); r.selectNodeContents(document.getElementById("phone"));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      note.textContent = "Số đã được chọn, nhấn Ctrl+C để sao chép.";
+    };
+    try { navigator.clipboard.writeText(num).then(done, fallback); } catch (e) { fallback(); }
+  });
+
+  if (!L) { document.getElementById("gallery").innerHTML = '<p class="empty">Không tải được danh sách block (thiếu assets/blocks.js).</p>'; return; }
+  document.querySelectorAll("[data-stat]").forEach(function(el){
+    var v = L.stats[el.getAttribute("data-stat")]; if (v != null) el.textContent = fmt(v);
+  });
+
+  var catName = {}; L.cats.forEach(function(c){ catName[c[0]] = c[1]; });
+  L.blocks.forEach(function(b, i){ b.idx = i; b.key = fold([b.n, catName[b.c], b.k.join(" "), b.st.join(" ")].join(" ")); });
+
+  var PAGE = 24, cur = "all", shown = PAGE, list = L.blocks;
+  var catsEl = document.getElementById("cats"), gal = document.getElementById("gallery"),
+      more = document.getElementById("more"), count = document.getElementById("count"), q = document.getElementById("q");
+
+  var chips = [["all", "Tất cả", L.blocks.length]].concat(L.cats);
+  catsEl.innerHTML = chips.map(function(c){
+    return '<button type="button" class="cat" data-cat="' + c[0] + '" aria-pressed="' + (c[0] === cur) + '">' + esc(c[1]) + '<small>' + c[2] + '</small></button>';
+  }).join("");
+  catsEl.addEventListener("click", function(e){
+    var b = e.target.closest(".cat"); if (!b) return;
+    cur = b.getAttribute("data-cat"); shown = PAGE;
+    catsEl.querySelectorAll(".cat").forEach(function(x){ x.setAttribute("aria-pressed", String(x === b)); });
+    render();
+  });
+  var t; q.addEventListener("input", function(){ clearTimeout(t); t = setTimeout(function(){ shown = PAGE; render(); }, 120); });
+  more.addEventListener("click", function(){ shown += PAGE; render(); });
+
+  function meta(b){
+    var s = b.v + " hình chiếu";
+    if (b.k.length) s += ' · <b>' + b.k.length + ' kiểu</b>';
+    return s;
+  }
+  function render(){
+    var words = fold(q.value).split(/\s+/).filter(Boolean);
+    list = L.blocks.filter(function(b){
+      if (cur !== "all" && b.c !== cur) return false;
+      for (var i = 0; i < words.length; i++) if (b.key.indexOf(words[i]) < 0) return false;
+      return true;
+    });
+    var view = list.slice(0, shown);
+    gal.innerHTML = view.length ? view.map(function(b){
+      return '<button type="button" class="card" data-i="' + b.idx + '">' +
+        '<span class="pic">' + (b.i ? '<img loading="lazy" src="' + b.i + '" alt="' + esc(b.n) + '">' : '') + '</span>' +
+        '<span class="nm">' + esc(b.n) + '</span><span class="mt">' + meta(b) + '</span></button>';
+    }).join("") : '<p class="empty">Không có block nào khớp “' + esc(q.value) + '”. Thử từ khác, hoặc chọn nhóm Tất cả.</p>';
+    count.textContent = "Đang hiện " + view.length + " / " + list.length + " block";
+    more.hidden = list.length <= shown;
+    if (!more.hidden) more.textContent = "Hiện thêm " + Math.min(PAGE, list.length - shown) + " block";
+  }
+  render();
+
+  // detail dialog
+  var dlg = document.getElementById("dlg"), body = document.getElementById("dlg-body");
+  var FLIP = /^(Lật|Mở|Đảo)/;
+  gal.addEventListener("click", function(e){
+    var c = e.target.closest(".card"); if (!c) return;
+    var b = L.blocks[+c.getAttribute("data-i")];
+    document.getElementById("dlg-title").textContent = b.n;
+    document.getElementById("dlg-sub").textContent = catName[b.c] + " · " + b.v + " hình chiếu / trạng thái" + (b.k.length ? " · " + b.k.length + " kiểu" : "");
+    var h = '<div class="dlg-pic">' + (b.i ? '<img src="' + b.i + '" alt="' + esc(b.n) + ': mặt bằng, mặt đứng, mặt cắt">' : '') + '</div>';
+    if (b.s) h += '<div><h4>Bộ sưu tập kiểu</h4><div class="strip"><img src="' + b.s + '" alt="Các kiểu của ' + esc(b.n) + '"></div>' +
+      '<div class="tags" style="margin-top:10px">' + ["Mặc định"].concat(b.k).map(function(k){ return '<span class="tag">' + esc(k) + '</span>'; }).join("") + '</div></div>';
+    else if (b.k.length) h += '<div><h4>Kiểu dáng</h4><div class="tags">' + ["Mặc định"].concat(b.k).map(function(k){ return '<span class="tag">' + esc(k) + '</span>'; }).join("") + '</div></div>';
+    var sts = b.st.filter(function(s){ return s.indexOf(" - ") < 0; });
+    h += '<div><h4>Hình chiếu</h4><div class="tags">' + sts.map(function(s){ return '<span class="tag">' + esc(s) + '</span>'; }).join("") + '</div></div>';
+    if (b.p.length) h += '<div><h4>Thông số động (mặc định)</h4><div class="tags">' + b.p.map(function(p){
+      return FLIP.test(p[0]) ? '<span class="tag flip">' + esc(p[0]) + '</span>' : '<span class="tag">' + esc(p[0]) + ' <b>' + esc(p[1]) + '</b></span>';
+    }).join("") + '</div></div>';
+    else h += '<div><h4>Thông số</h4><div class="tags"><span class="tag">Kích thước cố định, đổi bằng ô Hình chiếu</span></div></div>';
+    body.innerHTML = h; body.scrollTop = 0;
+    if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", "");
+  });
+  document.getElementById("dlg-x").addEventListener("click", function(){ dlg.close ? dlg.close() : dlg.removeAttribute("open"); });
+  dlg.addEventListener("click", function(e){ if (e.target === dlg) dlg.close(); });
+})();
+</script>
+</body>
+</html>
