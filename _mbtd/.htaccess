@@ -1,0 +1,15 @@
+# /_mbtd — script cập nhật dtool.vn (update.php). Không cho xem nhật ký / trạng thái / file tạm / thư mục giải nén qua web.
+Options -Indexes
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^x(/|$) - [F,L]
+</IfModule>
+<FilesMatch "^(state\.json|update\.log|update\.lock|dl\.zip|setup\.part|web_build\.txt|update\.php\.new)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

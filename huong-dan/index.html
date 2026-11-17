@@ -1,0 +1,1467 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hướng dẫn sử dụng Dtool</title>
+<meta name="description" content="Hướng dẫn sử dụng Dtool 2.3.88 – add-in AutoCAD vẽ nhanh kiến trúc, kết cấu, điện nước: cài đặt, bản quyền, mặt bằng tự động, tường – cửa – nội thất, mặt cắt – mặt đứng, khối lượng, móng – dầm – cột – sàn, hồ sơ, điện nước, Trợ lý AI, danh sách 222 lệnh.">
+<link rel="canonical" href="https://dtool.vn/huong-dan/">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://dtool.vn/huong-dan/">
+<meta property="og:site_name" content="Dtool">
+<meta property="og:locale" content="vi_VN">
+<meta property="og:title" content="Hướng dẫn sử dụng Dtool 2.3.88">
+<meta property="og:description" content="Từng bước dùng Dtool trong AutoCAD: kiến trúc, kết cấu, điện nước, khối lượng, hồ sơ và Trợ lý AI.">
+<meta property="og:image" content="https://dtool.vn/assets/og.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='4' fill='%2315212b'/%3E%3Cpath d='M10 8h6a8 8 0 0 1 0 16h-6z' fill='none' stroke='%23e3a443' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Roboto+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Cùng bộ nhận diện dtool.vn: tờ giấy vẽ kỹ thuật, tên lệnh dạng phím. Trang tài liệu: mục lục trái, nội dung một cột đọc ~70 ký tự. */
+:root{
+  --bg:#f2f4f3; --surface:#ffffff; --ink:#15212b; --muted:#56636e; --line:#d4dbde; --line2:#e6eaec;
+  --accent:#995d0b; --accent-ink:#ffffff; --accent-soft:#f5e8d2; --blue:#2c5d88; --blue-soft:#e3edf6;
+  --warn:#a3361f; --warn-soft:#f8e4de; --ok:#2e6b3f; --ok-soft:#e1efe4;
+  --grid:rgba(21,33,43,.055); --paper:#ffffff;
+  --shadow:0 1px 2px rgba(21,33,43,.06),0 8px 24px rgba(21,33,43,.07);
+  --f-body:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  --f-mono:"IBM Plex Mono",Consolas,"Courier New",monospace;
+  --f-cad:"Roboto Condensed","Arial Narrow",Arial,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#0e1317; --surface:#151c22; --ink:#e3e8eb; --muted:#9aa7b1; --line:#2a343c; --line2:#212a31;
+    --accent:#e3a443; --accent-ink:#1a1204; --accent-soft:#33260f; --blue:#8dbbe6; --blue-soft:#1b2a37;
+    --warn:#ee8f78; --warn-soft:#3a1d16; --ok:#8fcf9f; --ok-soft:#16281b;
+    --grid:rgba(227,232,235,.045); --paper:#fbfbfa;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#0e1317; --surface:#151c22; --ink:#e3e8eb; --muted:#9aa7b1; --line:#2a343c; --line2:#212a31;
+  --accent:#e3a443; --accent-ink:#1a1204; --accent-soft:#33260f; --blue:#8dbbe6; --blue-soft:#1b2a37;
+  --warn:#ee8f78; --warn-soft:#3a1d16; --ok:#8fcf9f; --ok-soft:#16281b;
+  --grid:rgba(227,232,235,.045); --paper:#fbfbfa;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--blue)}
+h1,h2,h3,h4{text-wrap:balance;line-height:1.22;margin:0}
+p{margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+kbd{font-family:var(--f-mono);font-size:.8em;font-weight:500;padding:.06em .42em;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;background:var(--surface);color:var(--ink);white-space:nowrap}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--line2);padding:.08em .35em;border-radius:3px;overflow-wrap:anywhere}
+.ui{font-weight:600}  /* chữ trên giao diện: nút, ô, mục menu */
+
+/* đầu trang */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line2)}
+.top .in{max-width:1240px;margin:0 auto;padding-inline:20px;display:flex;align-items:center;gap:18px;height:60px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font:800 19px/1 var(--f-body);letter-spacing:-.01em}
+.brand svg{width:28px;height:28px;flex:none}
+.brand small{font:500 12px/1 var(--f-cad);color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.top nav{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:.45em;white-space:nowrap;font:600 14px/1 var(--f-body);padding:10px 14px;border-radius:6px;text-decoration:none;border:1px solid var(--line);color:var(--ink);background:var(--surface)}
+.btn:hover{border-color:var(--ink)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+@media (max-width:640px){.top .hide-s{display:none}.brand small{display:none}}
+
+/* bố cục */
+.page{max-width:1240px;margin:0 auto;padding:28px 20px 80px;display:grid;grid-template-columns:250px minmax(0,1fr);gap:48px;align-items:start}
+.toc{position:sticky;top:84px;max-height:calc(100vh - 100px);overflow:auto;font-size:14px;padding-right:6px}
+.toc h2{font:600 12px/1 var(--f-cad);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+.toc a{display:flex;gap:8px;padding:5px 8px;border-radius:5px;text-decoration:none;color:var(--muted);line-height:1.35}
+.toc a b{font:500 12px/1.6 var(--f-mono);color:var(--muted);min-width:1.6em}
+.toc a:hover{color:var(--ink);background:var(--line2)}
+.toc a.on{color:var(--ink);background:var(--accent-soft)}
+.toc a.on b{color:var(--accent)}
+.toc-m{display:none}
+@media (max-width:960px){
+  .page{grid-template-columns:minmax(0,1fr);gap:20px}
+  .toc{display:none}
+  .toc-m{display:block;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+  .toc-m summary{cursor:pointer;padding:12px 14px;font-weight:600}
+  .toc-m ol{list-style:none;margin:0;padding:0 8px 10px;columns:2 220px;font-size:14px}
+  .toc-m a{display:block;padding:4px 6px;text-decoration:none;color:var(--ink)}
+}
+main{min-width:0}
+.doc{max-width:780px}
+
+/* đầu tài liệu */
+.hero{padding:6px 0 26px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.hero .dim{display:flex;align-items:center;gap:10px;font:500 12.5px/1 var(--f-cad);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.hero .dim .rule{flex:0 0 28px;height:1px;background:var(--accent)}
+.hero h1{font-size:clamp(30px,4.6vw,44px);font-weight:800;letter-spacing:-.02em}
+.hero p{margin-top:14px;color:var(--muted);font-size:17px;max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:18px;font:500 13.5px/1.4 var(--f-cad);color:var(--muted);letter-spacing:.02em}
+.meta span{display:inline-flex;gap:6px;align-items:center}
+.meta b{color:var(--ink);font-weight:600}
+
+/* mục */
+.sec{padding-top:44px}
+.sec>h2{display:flex;align-items:baseline;gap:14px;font-size:clamp(23px,3vw,29px);font-weight:700;letter-spacing:-.01em;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:18px}
+.sec>h2 .n{font:600 15px/1 var(--f-mono);color:var(--accent);flex:none}
+.sec h3{font-size:19px;font-weight:700;margin:30px 0 10px}
+.sec h4{font-size:16px;font-weight:700;margin:20px 0 6px}
+.sec p{margin:10px 0}
+.lead{font-size:17px;color:var(--muted)}
+.sec ul,.sec ol{margin:10px 0;padding-left:1.35em}
+.sec li{margin:4px 0}
+.sec li>ul{margin:4px 0}
+
+/* các bước */
+ol.steps{list-style:none;padding:0;margin:14px 0;counter-reset:st;display:flex;flex-direction:column;gap:10px}
+ol.steps>li{counter-increment:st;position:relative;padding:12px 14px 12px 52px;background:var(--surface);border:1px solid var(--line2);border-radius:8px;margin:0}
+ol.steps>li::before{content:counter(st);position:absolute;left:12px;top:11px;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--bg);font:600 14px/28px var(--f-mono);text-align:center}
+ol.steps>li>b:first-child{display:block;margin-bottom:2px}
+
+/* bảng lệnh */
+.tw{overflow-x:auto;margin:14px 0;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;vertical-align:top;padding:8px 12px;border-bottom:1px solid var(--line2)}
+th{font:600 12px/1.3 var(--f-cad);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td:first-child{white-space:nowrap;width:1%}
+table.num td{font-variant-numeric:tabular-nums}
+
+/* ghi chú */
+.note{border-left:4px solid var(--blue);background:var(--blue-soft);padding:11px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:15px}
+.tip{border-left:4px solid var(--accent);background:var(--accent-soft);padding:11px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:15px}
+.warn{border-left:4px solid var(--warn);background:var(--warn-soft);padding:11px 14px;border-radius:0 8px 8px 0;margin:14px 0;font-size:15px}
+.note>b:first-child,.tip>b:first-child,.warn>b:first-child{display:block;font-size:13px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px}
+.note p,.tip p,.warn p{margin:4px 0}
+.note ul,.tip ul,.warn ul{margin:4px 0}
+
+/* hình */
+figure{margin:18px 0;background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:10px;box-shadow:var(--shadow)}
+figure img{margin:0 auto;border-radius:3px}
+figcaption{font:500 13px/1.45 var(--f-cad);color:#56636e;margin-top:8px;letter-spacing:.01em}
+
+/* thẻ nhanh */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0}
+.card{background:var(--surface);border:1px solid var(--line2);border-radius:8px;padding:14px 16px}
+.card h4{margin:0 0 6px;font-size:15.5px}
+.card p{margin:0;font-size:14.5px;color:var(--muted)}
+.card a{text-decoration:none;color:inherit}
+.card:hover{border-color:var(--line)}
+
+/* phụ lục lệnh */
+.find{display:flex;gap:10px;align-items:center;margin:14px 0;flex-wrap:wrap}
+.find input{flex:1 1 260px;min-width:0;font:15px var(--f-body);padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.find span{font:500 13px var(--f-cad);color:var(--muted)}
+.cmdgrp h3{margin-top:24px}
+.cmdgrp h4{font:600 12.5px/1.3 var(--f-cad);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:18px 0 6px}
+.empty{display:none;color:var(--muted);padding:12px 0}
+
+.foot{margin-top:60px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 24px}
+
+/* in ra PDF (khổ A4): bỏ thanh trên + mục lục + ô tìm, mỗi phần lớn sang trang mới */
+@page{size:A4;margin:16mm 14mm 16mm 14mm}
+@media print{
+  :root{--bg:#fff;--surface:#fff}
+  body{font-size:10.5pt;line-height:1.5;background:#fff;color:#15212b}
+  .top,.toc,.toc-m,.find,.noprint{display:none!important}
+  .page{display:block;padding:0;max-width:none}
+  .doc{max-width:none}
+  .sec{padding-top:12mm;break-before:auto}
+  .sec.part{padding-top:0;break-before:page}   /* đầu mỗi phần lớn (Kiến trúc, Kết cấu, Điện nước, Trợ lý AI, Bảng tra lệnh) sang trang mới */
+  .sec.first{padding-top:0;break-before:auto}
+  .sec>h2{break-after:avoid}
+  .cmdgrp td,.cmdgrp th{padding-top:2.5px;padding-bottom:2.5px}
+  .cmdgrp h4{margin:12px 0 4px}
+  .sec>h2{font-size:18pt}
+  h3,h4{break-after:avoid}
+  ol.steps>li,.tip,.note,.warn,figure,tr{break-inside:avoid}
+  figure{box-shadow:none}
+  figure img{max-height:110mm;width:auto}
+  a{color:#15212b;text-decoration:none}
+  .cmdgrp tr{display:table-row!important}
+  .cmdgrp,.cmdgrp h4{display:block!important}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="in">
+    <a class="brand" href="/" aria-label="Dtool – trang chủ">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="4" fill="var(--ink)"/><path d="M10 8h6a8 8 0 0 1 0 16h-6z" fill="none" stroke="var(--accent)" stroke-width="3"/></svg>
+      Dtool <small>Hướng dẫn sử dụng</small>
+    </a>
+    <nav aria-label="Liên kết">
+      <a class="btn hide-s" href="/huong-dan-su-dung-dtool.pdf">Tải PDF</a>
+      <a class="btn pri" href="/#bat-dau">Tải Dtool 2.3.88</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page">
+  <nav class="toc" aria-label="Mục lục">
+    <h2>Mục lục</h2>
+    <ol><li><a href="#bat-dau"><b>01</b>Bắt đầu nhanh</a></li>
+<li><a href="#cai-dat"><b>02</b>Cài đặt và cập nhật</a></li>
+<li><a href="#ban-quyen"><b>03</b>Bản quyền và dùng thử</a></li>
+<li><a href="#giao-dien"><b>04</b>Làm quen giao diện</a></li>
+<li><a href="#mbtd"><b>05</b>Mặt bằng tự động (MBTD)</a></li>
+<li><a href="#tuong-cua"><b>06</b>Trục, cột, tường, cửa</a></li>
+<li><a href="#phong-noi-that"><b>07</b>Phòng, sàn, trần, nội thất</a></li>
+<li><a href="#mat-cat"><b>08</b>Mái, mặt cắt, mặt đứng, chi tiết</a></li>
+<li><a href="#kl-kt"><b>09</b>Kích thước và khối lượng kiến trúc</a></li>
+<li><a href="#ho-so-kt"><b>10</b>Bảng thống kê, dàn trang, in bộ</a></li>
+<li><a href="#mong"><b>11</b>Kết cấu móng</a></li>
+<li><a href="#dam"><b>12</b>Kết cấu dầm</a></li>
+<li><a href="#than"><b>13</b>Kết cấu phần thân: cột, vách, thang, bể</a></li>
+<li><a href="#san"><b>14</b>Kết cấu sàn</a></li>
+<li><a href="#tang"><b>15</b>Tầng và lưới trục</a></li>
+<li><a href="#ho-so-kc"><b>16</b>Hồ sơ kết cấu: dàn trang, rà lỗi</a></li>
+<li><a href="#kl-kc"><b>17</b>Khối lượng, dự toán, cắt thép</a></li>
+<li><a href="#ifc"><b>18</b>Cốt thép 3D và xuất IFC</a></li>
+<li><a href="#dien-nuoc"><b>19</b>Điện nước</a></li>
+<li><a href="#tro-ly-ai"><b>20</b>Trợ lý AI</a></li>
+<li><a href="#tinh-toan"><b>21</b>Cách tính: neo, nối, lớp bảo vệ</a></li>
+<li><a href="#su-co"><b>22</b>Khi gặp sự cố</a></li>
+<li><a href="#lenh"><b>23</b>Bảng tra lệnh</a></li></ol>
+  </nav>
+  <main>
+    <div class="doc">
+      <div class="hero">
+        <div class="dim"><span class="rule"></span><span>Dtool 2.3.88 · cập nhật 20/10/2026</span></div>
+        <h1>Hướng dẫn sử dụng Dtool</h1>
+        <p>Add-in AutoCAD vẽ nhanh kiến trúc, kết cấu, điện nước và bóc khối lượng. Tài liệu này đi theo việc cần làm: cài đặt, mỗi tab trên Ribbon, cách lập hồ sơ, Trợ lý AI, và bảng tra 222 lệnh ở cuối.</p>
+        <div class="meta">
+          <span>AutoCAD <b>2021 – 2024</b></span>
+          <span>Dùng thử <b>7 ngày</b> đủ lệnh</span>
+          <span>Hỗ trợ <b>Zalo / ĐT 0937 142 789</b></span>
+        </div>
+      </div>
+      <details class="toc-m"><summary>Mục lục</summary><ol><li><a href="#bat-dau">01 · Bắt đầu nhanh</a></li>
+<li><a href="#cai-dat">02 · Cài đặt và cập nhật</a></li>
+<li><a href="#ban-quyen">03 · Bản quyền và dùng thử</a></li>
+<li><a href="#giao-dien">04 · Làm quen giao diện</a></li>
+<li><a href="#mbtd">05 · Mặt bằng tự động (MBTD)</a></li>
+<li><a href="#tuong-cua">06 · Trục, cột, tường, cửa</a></li>
+<li><a href="#phong-noi-that">07 · Phòng, sàn, trần, nội thất</a></li>
+<li><a href="#mat-cat">08 · Mái, mặt cắt, mặt đứng, chi tiết</a></li>
+<li><a href="#kl-kt">09 · Kích thước và khối lượng kiến trúc</a></li>
+<li><a href="#ho-so-kt">10 · Bảng thống kê, dàn trang, in bộ</a></li>
+<li><a href="#mong">11 · Kết cấu móng</a></li>
+<li><a href="#dam">12 · Kết cấu dầm</a></li>
+<li><a href="#than">13 · Kết cấu phần thân: cột, vách, thang, bể</a></li>
+<li><a href="#san">14 · Kết cấu sàn</a></li>
+<li><a href="#tang">15 · Tầng và lưới trục</a></li>
+<li><a href="#ho-so-kc">16 · Hồ sơ kết cấu: dàn trang, rà lỗi</a></li>
+<li><a href="#kl-kc">17 · Khối lượng, dự toán, cắt thép</a></li>
+<li><a href="#ifc">18 · Cốt thép 3D và xuất IFC</a></li>
+<li><a href="#dien-nuoc">19 · Điện nước</a></li>
+<li><a href="#tro-ly-ai">20 · Trợ lý AI</a></li>
+<li><a href="#tinh-toan">21 · Cách tính: neo, nối, lớp bảo vệ</a></li>
+<li><a href="#su-co">22 · Khi gặp sự cố</a></li>
+<li><a href="#lenh">23 · Bảng tra lệnh</a></li></ol></details>
+<section class="sec first" id="bat-dau" data-t="Bắt đầu nhanh">
+<h2><span class="n">01</span>Bắt đầu nhanh</h2>
+<p class="lead">Dtool là add-in AutoCAD vẽ nhanh hồ sơ nhà ở Việt Nam: mặt bằng kiến trúc, mặt cắt, mặt đứng, kết cấu BTCT có cốt thép, điện nước, khối lượng ra Excel và dàn trang in bộ. Đối tượng Dtool vẽ ra (tường, cửa, cấu kiện…) mang sẵn thông tin để tính khối lượng và tự vẽ lại khi sửa.</p>
+
+<div class="cards">
+  <div class="card"><a href="#mbtd"><h4>Nhà mới trong 10 phút</h4><p>MBTD: chọn lô, số tầng, công năng → chọn phương án → vẽ mặt bằng, mặt cắt, mặt đứng, mái, nội thất.</p></a></div>
+  <div class="card"><a href="#tuong-cua"><h4>Mặt bằng vẽ tay</h4><p>Trục, cột, tường, cửa thư viện, nhãn phòng, nội thất tự động — rồi mặt cắt, khối lượng như nhà MBTD.</p></a></div>
+  <div class="card"><a href="#mong"><h4>Kết cấu BTCT</h4><p>Khai báo móng, dầm, cột, sàn, thang → đặt lên mặt bằng → chi tiết thép, bảng thép, Excel, IFC.</p></a></div>
+  <div class="card"><a href="#dien-nuoc"><h4>Điện nước</h4><p>Bố trí đèn, ổ cắm, điều hòa, cấp thoát nước trên mặt bằng kiến trúc → sơ đồ, tính tải, thuyết minh.</p></a></div>
+  <div class="card"><a href="#tro-ly-ai"><h4>Trợ lý AI</h4><p>Chat tiếng Việt với Claude ngay trong AutoCAD / SketchUp: hỏi, soát bản vẽ, vẽ bằng lệnh Dtool.</p></a></div>
+  <div class="card"><a href="#lenh"><h4>Tra lệnh</h4><p>Mọi lệnh theo tab và nhóm, có ô tìm theo tên hoặc việc cần làm.</p></a></div>
+</div>
+
+<h3>Lần đầu dùng: nhà phố 5 × 18 m, 4 tầng</h3>
+<ol class="steps">
+  <li><b>Cài và mở AutoCAD</b>Xem <a href="#cai-dat">Cài đặt</a>. Được dùng thử 7 ngày đủ mọi lệnh.</li>
+  <li><b>Mở bảng Thiết kế</b>Gõ <kbd>MBTD</kbd> (tab Kiến Trúc › Thiết kế). Nhập lô rộng 5000, sâu 18000; 4 tầng + tum; giữ công năng mặc định.</li>
+  <li><b>Chọn phương án</b>Bấm ◀ / ▶ xem các phương án, mỗi tầng hiện ngay trên bảng.</li>
+  <li><b>Vẽ</b>Mục 4: tích Nội thất, Tên phòng, DIM, Trục, Mặt cắt, Mặt đứng → <span class="ui">Vẽ vào bản vẽ</span> → bấm điểm đặt.</li>
+  <li><b>Sửa tiếp như bản vẽ tay</b>Đổi cửa bằng bảng Cửa, kéo tường bằng <kbd>KEOTUONG</kbd> — mặt cắt, mặt đứng tự vẽ lại.</li>
+  <li><b>Khối lượng và hồ sơ</b><kbd>KLKT</kbd> ra Excel; <kbd>DTRKT</kbd> dàn trang; <kbd>INBO</kbd> in cả bộ ra một file PDF.</li>
+</ol>
+
+<div class="tip"><b>App điện thoại MBTD (miễn phí)</b>
+<p><a href="/app/">dtool.vn/app</a> chạy trong trình duyệt điện thoại, cài được ra màn hình chính: khảo sát hiện trạng, kéo thả phương án, xem 3D ngay tại công trình. Bố trí lưu thành file <code>.mbtd</code>, gửi về máy rồi mở tiếp trong khung kéo thả của Dtool (<a href="#mbtd-file">File .mbtd</a>).</p></div>
+</section>
+
+<section class="sec part" id="cai-dat" data-t="Cài đặt và cập nhật">
+<h2><span class="n">02</span>Cài đặt và cập nhật</h2>
+<p class="lead">Dtool chạy trên AutoCAD 2021, 2022, 2023, 2024 (64-bit), cài theo tài khoản Windows, không cần quyền quản trị. AutoCAD 2025 trở lên chưa hỗ trợ. AutoCAD cần để <code>LISPSYS</code> = 1 (mặc định); máy đã đổi sang 0 cho lisp cũ thì phần Kiến trúc không nạp được (xem <a href="#su-co">Khi gặp sự cố</a>).</p>
+
+<h3>Cài lần đầu</h3>
+<ol class="steps">
+  <li><b>Tải bộ cài</b>Ở <a href="/#bat-dau">dtool.vn, mục Cài đặt</a>, bấm <span class="ui">Tải Dtool 2.3.88</span> (file zip).</li>
+  <li><b>Đóng hết AutoCAD</b>Bộ cài tự dừng và nhắc nếu AutoCAD còn mở.</li>
+  <li><b>Giải nén</b>Giải nén cả thư mục ra ổ đĩa — không chạy thẳng trong file zip.</li>
+  <li><b>Chạy <code>CaiDat.bat</code></b>Nhấp đúp; chờ báo cài xong.</li>
+  <li><b>Mở AutoCAD</b>Ribbon có ba tab <span class="ui">Kết Cấu</span>, <span class="ui">Kiến Trúc</span>, <span class="ui">Điện Nước</span>; thanh menu có các menu Dtool; dòng lệnh báo phiên bản vừa nạp. Không thấy tab thì gõ <kbd>RIB</kbd>.</li>
+</ol>
+
+<h3>Cập nhật bản mới</h3>
+<ul>
+  <li>Tải zip bản mới, đóng AutoCAD, chạy <code>CaiDat.bat</code> của bản mới. Không cần gỡ bản cũ; bản quyền, thiết lập, thư viện mẫu giữ nguyên.</li>
+  <li>Bản vẽ cũ có block thư viện đã chèn: gõ <kbd>CNTV</kbd> để block nhận hình mới của thư viện.</li>
+  <li>Bản vẽ cũ mở bằng bản mới: tên kiểu kích thước, kiểu chữ, block tự đổi sang "DTOOL…", dòng lệnh báo số tên đã đổi.</li>
+</ul>
+
+<h3>Gỡ cài đặt</h3>
+<p>Đóng AutoCAD, chạy <code>GoCaiDat.bat</code> trong thư mục bộ cài.</p>
+
+<div class="note"><b>Trong bộ cài có</b>
+<ul>
+  <li><code>DOC_TRUOC.txt</code> — các bước cài ngắn gọn;</li>
+  <li><code>HUONG_DAN.md</code> — tài liệu tra cứu đầy đủ (mở bằng Notepad);</li>
+  <li><code>Dtool_DanhSachLenh.xlsx</code> — mọi lệnh kèm mô tả, vị trí Ribbon / menu, hướng dẫn nhanh theo việc;</li>
+  <li><code>BaoLoi.bat</code> — gom nhật ký khi AutoCAD văng (xem <a href="#su-co">Khi gặp sự cố</a>).</li>
+</ul></div>
+</section>
+
+<section class="sec" id="ban-quyen" data-t="Bản quyền và dùng thử">
+<h2><span class="n">03</span>Bản quyền và dùng thử</h2>
+<p class="lead">Bản cài đặt đầu tiên được dùng thử 7 ngày, đủ mọi lệnh. Sau đó cần mã kích hoạt theo máy.</p>
+
+<ul>
+  <li>Mỗi lần mở AutoCAD, dòng lệnh báo số ngày dùng thử còn lại; còn ≤ 3 ngày thì hộp <span class="ui">Bản quyền</span> tự mở.</li>
+  <li>Hết hạn: lệnh Dtool báo "cần bản quyền" và mở hộp Bản quyền; thư viện block không mở được. Lệnh <kbd>BQ</kbd> và <kbd>RIB</kbd> luôn chạy.</li>
+</ul>
+
+<h3>Kích hoạt</h3>
+<ol class="steps">
+  <li><b>Mở hộp Bản quyền</b>Gõ <kbd>BQ</kbd> hoặc bấm nút <span class="ui">Bản quyền</span> ở nhóm Chung.</li>
+  <li><b>Sao chép mã máy</b>Bấm <span class="ui">Sao chép</span> mã máy (dạng <code>XXXX-XXXX-XXXX-XXXX</code>).</li>
+  <li><b>Gửi mã máy</b>Gửi qua Zalo / điện thoại <b>0937 142 789</b>.</li>
+  <li><b>Dán mã kích hoạt</b>Nhận mã kích hoạt, bấm <span class="ui">Dán</span> rồi <span class="ui">Kích hoạt</span>. Bản vẽ đang mở dùng được ngay; bản vẽ khác thì mở lại.</li>
+</ol>
+
+<div class="warn"><b>Lưu ý</b>
+<ul>
+  <li>Mỗi mã kích hoạt chỉ đúng cho một máy; mã có thể vĩnh viễn hoặc có hạn.</li>
+  <li>Cài lại Windows hoặc thay ổ cài Windows thì mã máy đổi — liên hệ để cấp mã mới.</li>
+  <li>Gỡ / cài lại Dtool không mất kích hoạt (và cũng không được dùng thử lại).</li>
+  <li>Thư viện block được mã hóa: chép thư mục cài sang máy khác không dùng được thư viện. Block thư viện chèn vào bản vẽ mang dấu bản quyền của máy đã chèn — gõ <kbd>TVNGUON</kbd> để xem.</li>
+  <li>Nhập mã bằng dòng lệnh / script: <kbd>-BQ</kbd>.</li>
+</ul></div>
+</section>
+
+<section class="sec" id="giao-dien" data-t="Làm quen giao diện">
+<h2><span class="n">04</span>Làm quen giao diện</h2>
+<p class="lead">Mọi lệnh Dtool là một tên ngắn gõ được ở dòng lệnh, đồng thời có nút trên Ribbon, mục trên menu và bảng làm việc.</p>
+
+<h3>Ribbon và menu</h3>
+<ul>
+  <li><b>Tab Kết Cấu</b>: các nhóm Móng, Dầm, Thân, Sàn, Hồ sơ, Chung.</li>
+  <li><b>Tab Kiến Trúc</b>: Chung, Thiết kế (mặt bằng tự động), Trục – Cột, Tường, Cửa, Phòng – Sàn – Trần, Mái – Mặt đứng, Nội thất, Tiện ích, Chi tiết, DIM – Ghi chú, Khối lượng, Bảng thống kê, Hồ sơ.</li>
+  <li><b>Tab Điện Nước</b>: Tầng, Điện, Cấp thoát nước, Hồ sơ điện nước.</li>
+  <li><b>Menu trên thanh menu</b>: "Dtool Kết cấu", "Dtool Kiến trúc", "Dtool Điện nước" — mỗi nhóm Ribbon là một menu con, cột phải ghi tên lệnh. Mất menu (đổi workspace, CUI) thì gõ <kbd>MENUDT</kbd>; mất tab Ribbon thì gõ <kbd>RIB</kbd>.</li>
+</ul>
+
+<h3>Bảng làm việc</h3>
+<p>Mỗi nhóm trên tab Kiến Trúc có một bảng làm việc: đủ thông số của các lệnh trong nhóm, hình xem trước và nút lệnh. Mở bằng nút ↘ ở góc nhóm Ribbon, bằng các nút lớn Tiện ích / Chi tiết / Khối lượng / Bảng thống kê / Hồ sơ, hoặc gõ <kbd>BLV</kbd> rồi chọn nhóm. Tab Điện Nước có bảng riêng <kbd>BLVDN</kbd>.</p>
+<ul>
+  <li>Bảng nằm ở cạnh phải màn hình; kéo sang trái hay thả nổi tùy ý, AutoCAD nhớ chỗ. Mỗi lúc hiện một bảng — mở nhóm khác thì bảng đổi theo.</li>
+  <li>Sửa ô nào lưu ngay ô đó. Các lệnh của nhóm không còn hộp thoại: bấm từ bảng, Ribbon hay gõ lệnh đều chạy theo thông số trên bảng.</li>
+  <li>Lệnh kết cấu dùng hộp quản lý riêng (<kbd>QLM</kbd>, <kbd>QLD</kbd>, <kbd>QLTH</kbd>, <kbd>QLS</kbd>) có xem trước ngay khi gõ số.</li>
+</ul>
+
+<h3>Tra lệnh</h3>
+<ul>
+  <li><kbd>LENH</kbd> liệt kê mọi lệnh theo Kết cấu / Kiến trúc / Điện nước, kể cả lệnh dòng lệnh và lệnh cũ ít dùng. Bảng tra cũng có ở <a href="#lenh">cuối tài liệu này</a>.</li>
+  <li>Quy tắc đặt tên lệnh kết cấu: <b>việc + cấu kiện</b> — QL quản lý, MB mặt bằng, CT chi tiết (thêm N = nhiều), KL khối lượng ra Excel, TK thống kê thép vào bản vẽ; M móng, D dầm, TH thân, S sàn. Ví dụ <kbd>QLM</kbd>, <kbd>CTDN</kbd>, <kbd>KLTH</kbd>.</li>
+  <li>Lệnh có dấu "-" phía trước (<kbd>-QLM</kbd>, <kbd>-LUOI</kbd>, <kbd>-TANG</kbd>…) là bản dòng lệnh, dùng trong script.</li>
+  <li>Mọi hộp thoại mang tiêu đề "Dtool - …". Bấm ESC giữa lệnh chỉ báo "Đã hủy lệnh" — không phải lỗi.</li>
+  <li>Lệnh kiến trúc chạy trong Model, UCS World. Đơn vị bản vẽ là mm.</li>
+</ul>
+
+<div class="tip"><b>Dữ liệu nằm trong bản vẽ</b>
+<p>Khai báo cấu kiện, tầng, liên kết hình vẽ đều lưu ngay trong file DWG — gửi bản vẽ cho đồng nghiệp có Dtool là họ sửa tiếp được.</p></div>
+</section>
+
+<section class="sec part" id="mbtd" data-t="Mặt bằng tự động (MBTD)">
+<h2><span class="n">05</span>Mặt bằng tự động (MBTD)</h2>
+<p class="lead">Dựng phương án mặt bằng nhà phố, nhà cấp 4, biệt thự theo cách bố trí nhà thật ở Việt Nam, rồi vẽ ra bằng chính đối tượng Dtool — tường, cửa thư viện, thang, cột, nhãn phòng, nội thất — nên sửa tiếp như bản vẽ tay. Gõ <kbd>MBTD</kbd> hoặc nhóm <span class="ui">Thiết kế</span> trên tab Kiến Trúc.</p>
+
+<p>Có hai cách: <b>Máy đề xuất</b> (máy xếp nhiều phương án theo công năng, anh chọn) và <b>Tự bố trí</b> (kéo thả từng khối trong khung kéo thả).</p>
+
+<h3>Bốn bước trên bảng Thiết kế</h3>
+<ol class="steps">
+  <li><b>Khu đất</b><span class="ui">Chọn khung lô đất</span> (<kbd>MBTDLO</kbd>): chọn polyline kín của lô (Enter = bấm 2 góc), rồi bấm gần cạnh mặt tiền. Chưa có lô thì gõ rộng × sâu. Lô vạt góc, hình thang, lô xoay: giữ đúng hình, tường và phòng cắt theo ranh lô (lô lõm chữ L dùng khung bao). Lùi trước = sân trước / để xe; lùi sau = sân sau. <span class="ui">Loại nhà</span>: Nhà phố / Biệt thự.</li>
+  <li><b>Công trình</b>Số tầng (không kể tum), tum, cao tầng 1 / tầng lầu, tường bao / ngăn (mặc định 220 / 110), mái tầng trên cùng (mái bằng, Nhật, Thái, Mansard; kết cấu, độ dốc, 2 mái đầu hồi), phong cách mặt đứng (hiện đại / tân cổ điển).</li>
+  <li><b>Bố trí mặt bằng</b>Máy đề xuất: thang bộ, thang máy, kiểu thang, giếng trời, "Hai bên sát nhà bên" (không mở cửa sổ ra hai bên), phong thủy cơ bản; bấm Tầng 1 … Tum rồi tích công năng từng tầng (khách, bếp + ăn hoặc bếp riêng, số phòng ngủ, số WC, khép kín, thờ, sinh hoạt chung, ban công, giặt phơi, kho, sân thượng, để xe / gara). Xem trước mọi tầng ngay trên bảng; <span class="ui">◀ Trước</span> / <span class="ui">Tiếp ▶</span> đổi phương án; dòng ⚠ báo phòng thiếu sáng, thiếu WC, phòng hẹp.</li>
+  <li><b>Vẽ ra bản vẽ</b>Tích phần cần vẽ: Bố trí nội thất, Tên phòng, DIM, Trục / cột, Mặt cắt, Mặt đứng, Tam cấp trước cửa chính → <span class="ui">Vẽ vào bản vẽ</span> (<kbd>MBTDVE</kbd>). Các tầng đặt cạnh nhau, tầng 1 trên khung lô; có tên "MẶT BẰNG TẦNG n", mái + MẶT BẰNG MÁI nếu chọn mái dốc. Dtool tự khai báo tầng (<kbd>TANG</kbd>). Gõ <kbd>U</kbd> một lần là hoàn tác cả lần vẽ.</li>
+</ol>
+
+<figure><img src="../assets/shots/mbtd-mau-e.webp" width="529" height="390" loading="lazy" alt="Phương án mẫu E trên bảng Thiết kế: bốn mặt bằng tầng 1, 2, 3 và tum với thang chữ U, WC cạnh thang, phòng ngủ, ban công, sân phơi">
+<figcaption>Xem trước phương án trên bảng Thiết kế — mỗi tầng một hình, dòng tóm tắt ghi mẫu lõi thang.</figcaption></figure>
+
+<h3>Máy đề xuất xếp nhà ra sao</h3>
+<ul>
+  <li><b>Nhà phố theo mẫu nhà thật</b>: thang chữ U quay ngang sát một tường, lối đi 0,9–1,1 m dọc tường kia; WC sát tường biên cạnh thang; phòng ngủ khép kín là khối chữ L ôm WC riêng; nhà sâu có giếng trời sau thang và sinh hoạt chung giữa nhà; tầng trên cùng / tum: sân thượng → thờ → giặt → sân phơi.</li>
+  <li><b>Tầng 1 có WC gầm thang</b> để bếp + ăn rộng ra; luôn kèm một phương án WC sau thang để so sánh.</li>
+  <li><b>Nhà có thang máy</b>: hố 1,5 m, thang bộ cuốn quanh hố sát một tường, sảnh dọc tường kia, WC sau lõi; vế thang bộ 0,7–0,8 m. Thang máy vẽ bằng block "Thang máy gia đình", tường hố khoét sẵn ô cửa; mặt cắt qua hố có hố pit.</li>
+  <li>Phòng ngủ ra ban công bằng cửa 1 cánh + cửa sổ. Cột BTCT cùng vị trí ở mọi tầng, có lưới cột + trục như bản vẽ thật.</li>
+  <li>Lõi thang có 8 mẫu A–H (cuối nhà, U giữa nhà + giếng trời, U quay ngang, cạnh thang máy, 3 phòng ngủ hành lang một bên, thang thẳng + giếng trời, quanh thang máy, U cạnh phòng); kiểu thang chọn trên bảng được ưu tiên, các mẫu khác vẫn xem bằng ◀ / ▶.</li>
+  <li><b>Lô nhỏ, nông</b> (8–12 m): thang U bậc quạt, WC gầm thang, bếp + ăn cạnh thang. Lô quá nông cho chương trình: bảng báo cần sâu bao nhiêu và gợi ý bớt phòng.</li>
+  <li><b>Nhà cấp 4</b> (mặt tiền ≥ 6,6 m, 1 tầng): hiên trước, dãy chung khách → bếp + ăn, dãy phòng một hoặc hai bên.</li>
+  <li>Chấm điểm theo TCVN 4451 và nhà phố thực tế: phòng ngủ ≥ 9 m² rộng ≥ 2,4 m; WC ≥ 2,4 m² rộng ≥ 1,15 m; hành lang ≥ 0,9 m; khách ≥ 12 m²; WC không ra mặt tiền / không trên bếp, thang không đâm thẳng cửa chính.</li>
+</ul>
+
+<h3>Biệt thự</h3>
+<p>Chọn <span class="ui">Loại nhà</span> → Biệt thự: bảng tự đặt lùi hai bên, mái Thái, mặt đứng tân cổ điển và chương trình biệt thự mặc định (sửa lại được). Nhà đặt giữa lô, có khối nhô phía trước một bên (mỗi phương án có bản khối nhô trái / phải), sảnh cột tròn + tam cấp, ban công trên sảnh, thang chữ U giữa nhà, WC riêng góc phòng ngủ. Mái Thái có trán tam giác ở đầu khối nhô; mặt đứng có cột Corinthian suốt 2 tầng, cửa tân cổ điển (tầng 1 cửa vòm), con sơn dưới phào đỉnh, đèn trụ hai bên tam cấp, lan can con tiện. Tường rào ranh lô ở lớp <code>KT-TUONGRAO</code>, không vẽ trên mặt đứng / mặt cắt.</p>
+
+<h3>Khung kéo thả — tự bố trí</h3>
+<figure><img src="../assets/shots/mbtd-khung.webp" width="1265" height="605" loading="lazy" alt="Khung kéo thả của lệnh MBTD: năm tầng nhà phố có thang bộ bao quanh thang máy, phòng ngủ có giường, tủ áo, bàn học, phòng khách có sofa, đường mặt cắt A-A và B-B">
+<figcaption>Khung kéo thả: hàng ô mô-đun ở trên, các tầng cạnh nhau, đồ nội thất hình thật, đường mặt cắt.</figcaption></figure>
+<ol class="steps">
+  <li><b>Mở khung</b>Mục 3 chọn "Tự bố trí (kéo thả mô-đun)" hoặc <span class="ui">Mở khung kéo thả</span>; bấm <span class="ui">Bắt đầu trống</span> hoặc <span class="ui">Từ phương án máy</span> (sửa tiếp phương án đang xem).</li>
+  <li><b>Thả mô-đun</b>Kéo ô (PHÒNG · NGOÀI NHÀ · THANG · LÕI · CỬA) thả vào tầng; khối bám mép lô / mép khối gần. Hàng THANG có 7 kiểu: 1 vế, 2 vế thẳng, chữ L, chữ U, 3 vế, quanh thang máy, tròn. Thang, thang máy, giếng trời có ở mọi tầng cùng chỗ.</li>
+  <li><b>Dời, co giãn, nhập số</b>Kéo thân khối để dời (sang tầng khác được), kéo cạnh / góc để co giãn. Bấm chọn khối → dải thông số: rộng, sâu, cách trái, cách mặt tiền (mm, hoặc m như 3.6), tường trái / phải / trước / sau (0 = theo bề dày chung), ô <span class="ui">Cố định</span>.</li>
+  <li><b>Cửa</b>Kéo ô cửa thả lên tường. Dải thông số: Loại, <b>Mẫu</b> (mọi block cửa của thư viện), Số cánh, Rộng, Cao, Bậu, <b>Cách đầu trái / phải</b> (hoặc dưới / trên) — gõ số để đặt chính xác. Máy không tự đặt cửa trong khung kéo thả ("Từ phương án máy" thì lấy luôn cửa của phương án đó).</li>
+  <li><b>Đồ nội thất</b>Bấm một phòng → hàng ô thành đồ của phòng đó; kéo thả vào phòng (tựa tường gần nhất). Thả bàn ăn / bàn học / bàn trang điểm thì ghế tự đặt theo bàn. <span class="ui">◀ Mô-đun</span> để quay lại.</li>
+  <li><b>Vẽ</b><span class="ui">Vẽ vào bản vẽ</span>. Phòng chưa đặt đồ thì máy tự bố trí nội thất khi vẽ (theo ô Nội thất).</li>
+</ol>
+
+<figure><img src="../assets/shots/mbtd-noi-that.webp" width="1300" height="720" loading="lazy" alt="Khung kéo thả đang chọn phòng ngủ: hàng trên là giường đôi, giường đơn, tủ áo, tab, bàn học, tivi, kệ sách có hình nhỏ">
+<figcaption>Bấm vào phòng: hàng trên đổi thành đồ của phòng đó. Kéo cạnh đổi kích thước, Ctrl + kéo để sao chép, phím R xoay.</figcaption></figure>
+
+<div class="tw"><table><thead><tr><th>Thao tác</th><th>Kết quả</th></tr></thead><tbody>
+<tr><td>Chuột phải khối</td><td>Đổi loại, chép sang tầng khác, chỉ giữ ở tầng này, Cố định, "Gộp với … bên cạnh", xóa</td></tr>
+<tr><td>Chuột phải thang</td><td>Kiểu thang, chỗ quay (chiếu nghỉ / bậc quạt), xoay 90°, đảo chiều, bề rộng vế, mặt bậc, khung vừa thang, hướng LÊN / XUỐNG</td></tr>
+<tr><td>Chọn thang</td><td>Rộng vế, Số bậc (0 = tự động), Rộng bậc, hố thang máy rộng × sâu (mặc định 1500 × 1500), hố pit sâu</td></tr>
+<tr><td>Bấm / chuột phải chỗ trống</td><td>Cao tầng (0 = theo bảng), tường bao / ngăn, lưới cột, chép bố trí sang tầng khác (tích "cả nội thất"), xóa hết tầng</td></tr>
+<tr><td>Chuột phải đồ</td><td>Xoay, tựa tường, đổi mẫu, dài – sâu, sao chép, xóa</td></tr>
+<tr><td><kbd>R</kbd> · <kbd>Delete</kbd> · <kbd>Ctrl+Z</kbd> · <kbd>Ctrl+Y</kbd></td><td>Xoay khối / thang / đồ / chiều mở cửa dưới chuột · xóa · hoàn tác · làm lại</td></tr>
+<tr><td><span class="ui">✂ Mặt cắt ▾</span></td><td>Chèn mặt cắt dọc / ngang, để máy đặt tự động, hoặc cắt thủ công trên bản vẽ</td></tr>
+</tbody></table></div>
+
+<div class="note"><b>Khung kéo thả không kiểm tra thay anh</b>
+<ul>
+  <li>Thả mô-đun đè lên khối đã có: mô-đun mới tự áp sát, khối cũ giữ nguyên kích thước; tầng kín chỗ thì báo đỏ và giữ như cũ. Khối chồng nhau (file cũ) gạch đỏ — bấm phần đỏ để chọn rồi Delete.</li>
+  <li>Không gian cùng loại kề nhau (sảnh, khách, bếp, ăn, sinh hoạt chung, sân, ban công) tự gộp một phòng; phòng kín muốn gộp (phòng ngủ chữ L): chuột phải → "Gộp với … bên cạnh". Cạnh lệch nhau ≤ 6 cm coi là một đường tường.</li>
+  <li>Chỗ trống giữa các khối là khoảng không — muốn có lối đi thì đặt khối "Sảnh / hành lang".</li>
+  <li>Đổi lô / số tầng / thang trên bảng thì bố trí đang sắp bị bỏ; đổi công năng, bề dày tường, cao tầng thì không.</li>
+</ul></div>
+
+<h3 id="mbtd-file">File .mbtd và nạp lại (MBTDNAP)</h3>
+<ol class="steps">
+  <li><b>Lưu / mở</b>Trong khung: <span class="ui">Lưu file…</span> → file <code>.mbtd</code> (gửi người khác mở được), <span class="ui">Mở file…</span> hoặc "Bố trí tự lưu lần trước". Khung tự lưu sau mỗi lần sửa.</li>
+  <li><b>Liên kết với bản vẽ</b>Vẽ từ khung thì Dtool nhớ file và lần sửa đã vẽ (chưa có file thì tạo "<tên bản vẽ> - MBTD.mbtd" cạnh bản vẽ).</li>
+  <li><b>Sửa ở nơi khác</b>Sửa file ở app điện thoại hoặc khung kéo thả rồi lưu — AutoCAD nhắc trên dòng lệnh + bong bóng "Cập nhật bản vẽ".</li>
+  <li><b>Vẽ lại theo file</b><kbd>MBTDNAP</kbd>: nét Dtool đã sửa tay được liệt kê và hỏi một lần; bản vẽ sao lưu vào <code>Dtool_saoluu</code> cạnh bản vẽ; chỉ xóa phần Dtool vẽ lần trước — ghi chú, DIM, chi tiết anh vẽ thêm giữ nguyên.</li>
+</ol>
+<p>Bấm <span class="ui">Vẽ vào bản vẽ</span> lần nữa cho nhà đã vẽ: chọn <code>Capnhat</code> (mặc định, vẽ lại tại chỗ) hoặc <code>Vemoi</code> (thêm một bản). Phương án máy đề xuất chưa có liên kết — muốn liên kết: mở khung → "Từ phương án máy" rồi vẽ.</p>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>MBTD</kbd></td><td>Mở bảng Thiết kế</td></tr>
+<tr><td><kbd>MBTDLO</kbd></td><td>Chọn khung lô đất + cạnh mặt tiền</td></tr>
+<tr><td><kbd>MBTDVE</kbd></td><td>Vẽ phương án vào bản vẽ</td></tr>
+<tr><td><kbd>MBTDNAP</kbd></td><td>Vẽ lại theo file .mbtd đã liên kết</td></tr>
+<tr><td><kbd>MBTDMC</kbd></td><td>Mặt cắt thủ công trên bản vẽ MBTD</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="sec" id="tuong-cua" data-t="Trục, cột, tường, cửa">
+<h2><span class="n">06</span>Trục, cột, tường, cửa</h2>
+<p class="lead">Mặt bằng vẽ tay bằng đối tượng Dtool: tường mang sẵn cao / tầng / vật liệu để tính khối lượng, cửa là block động của thư viện và tự cắt tường.</p>
+
+<h3>Trục và cột</h3>
+<ol class="steps">
+  <li><b>Lưới trục</b><kbd>LUOIKT</kbd> → đầu trục <kbd>DTRUC</kbd> → DIM trục <kbd>DIMT</kbd>.</li>
+  <li><b>Cột</b><kbd>COT</kbd> bấm từng tâm, hoặc <kbd>COTT</kbd> (đặt tại giao trục): quét chọn trục, cột đặt ở mọi giao điểm, bỏ qua chỗ đã có cột.</li>
+</ol>
+
+<h3>Tường</h3>
+<ol class="steps">
+  <li><b>Chỉnh bảng Tường</b>Nút ↘ nhóm Tường: bề dày, vị trí (tim / mép), vật liệu, <b>Chiều cao</b>, Tầng / khu vực, Vật liệu khối xây. Ô "Gắn cao / tầng khi vẽ tường" (mặc định bật).</li>
+  <li><b>Vẽ</b><kbd>TUONG</kbd> rồi bấm chuỗi điểm; <kbd>TUONGT</kbd> dựng tường theo trục. Tường vẽ xong có sẵn cao, tầng, vật liệu, bề dày cho khối lượng. Tường vẽ từ trước: nút "Gán tường đã vẽ" (<kbd>GCAOT</kbd>).</li>
+  <li><b>Nối, hoàn thiện</b><kbd>NTUONG</kbd> nối tường, <kbd>TTCOT</kbd> trừ cột khỏi tường, <kbd>HTG</kbd> hatch hàng loạt, <kbd>CNHT</kbd> cập nhật hatch.</li>
+  <li><b>Co kéo</b><kbd>KEOTUONG</kbd> dùng như STRETCH: quét khung cắt → điểm gốc → điểm đến. Kéo dài, co ngắn, dời đoạn, đổi bề dày; hatch, vữa, ô cửa tự cập nhật; cửa, cột, DIM, biên phòng trong khung kéo theo.</li>
+  <li><b>Xóa đoạn tường</b><kbd>XTUONG</kbd>: bấm vào <b>giữa</b> bức tường (bấm liên tiếp, Enter để thôi) — cắt đoạn giữa hai chỗ giao, xóa cửa trong đoạn, dựng lại hatch / vữa.</li>
+</ol>
+
+<div class="tip"><b>Mẹo</b>
+<ul>
+  <li>Tường cao khác nhau trong cùng tầng: đổi Chiều cao trên bảng trước khi vẽ, hoặc sửa sau bằng <kbd>GCAOT</kbd> / <kbd>GCAO</kbd>.</li>
+  <li><kbd>KEOTUONG</kbd> kéo quá đầu tường thì báo và không đổi gì; tường chồng lên tường khác sau khi kéo: <kbd>NTUONG</kbd>; <kbd>U</kbd> để hoàn tác.</li>
+  <li>Mặt bằng chép (làm mặt bằng trát, lát…) tự tách khỏi bản gốc. Bản vẽ đã chép từ bản Dtool cũ: chạy <kbd>SCHEP</kbd> một lần.</li>
+</ul></div>
+
+<h3>Cửa</h3>
+<figure><img src="../assets/shots/bang-cua.webp" width="404" height="812" loading="lazy" alt="Bảng Cửa của Dtool: chọn mẫu cửa block động, hình thể hiện, xem trước, rộng, cao, dày tường, nút Đặt vào tường" style="max-width:300px">
+<figcaption>Bảng Cửa: chọn mẫu theo hình, sửa thông số, bấm "Đặt vào tường".</figcaption></figure>
+<ol class="steps">
+  <li><b>Mở bảng Cửa</b><kbd>CDI</kbd> (cửa đi) hoặc <kbd>CSO</kbd> (cửa sổ), hoặc nút ↘ nhóm Cửa.</li>
+  <li><b>Chọn mẫu</b>Lọc theo hình thể hiện, tìm tên, danh sách có hình thu nhỏ, xem trước lớn.</li>
+  <li><b>Thông số</b>Rộng (trống = theo mẫu), cao, <b>Dày tường</b> (trống = lấy bề dày tường bấm vào), vị trí trên mép tường (tại điểm bấm / cách góc / giữa đoạn), mã (AUTO), cao bệ, tầng, vật liệu, hiện nhãn.</li>
+  <li><b>Đặt</b><span class="ui">Đặt vào tường</span> (<kbd>DATCUA</kbd>, hoặc nháy đúp mẫu) → bấm <b>mép tường</b> phía cánh mở. Chèn tiếp bản sao liên tục được.</li>
+</ol>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>CDI</kbd> · <kbd>CSO</kbd> · <kbd>CUA</kbd></td><td>Mở bảng Cửa (cửa đi / cửa sổ)</td></tr>
+<tr><td><kbd>DATCUA</kbd></td><td>Đặt mẫu đang chọn vào tường</td></tr>
+<tr><td><kbd>DCUA</kbd></td><td>Dời / chép cửa</td></tr>
+<tr><td><kbd>GCUA</kbd></td><td>Gắn cửa vào tường (cửa chưa cắt tường)</td></tr>
+<tr><td><kbd>CNCUA</kbd> · <kbd>TDCUA</kbd></td><td>Cập nhật ô cửa bằng tay · tắt / bật tự cập nhật cửa</td></tr>
+<tr><td><kbd>NCUA</kbd> · <kbd>MCUA</kbd></td><td>Ẩn / hiện nhãn cửa · mã cửa</td></tr>
+</tbody></table></div>
+
+<div class="note"><b>Cửa đi theo tường</b>
+<ul>
+  <li>Cửa đã gắn tường tự cắt lại tường sau MOVE, COPY, dán, ARRAY, STRETCH, ROTATE, MIRROR, kéo grip, ERASE, sửa Properties; chép / dời sang tường khác thì tự gắn vào tường mới.</li>
+  <li>Rộng ngoài khoảng của mẫu: Dtool báo và dùng giới hạn của mẫu.</li>
+  <li><kbd>DIMMB</kbd> báo số cửa chưa gắn tường (tường chưa cắt → khối lượng tường sai) — gõ <kbd>GCUA</kbd>.</li>
+</ul></div>
+</section>
+
+<section class="sec" id="phong-noi-that" data-t="Phòng, sàn, trần, nội thất">
+<h2><span class="n">07</span>Phòng, sàn, trần, nội thất</h2>
+<p class="lead">Nhãn phòng có diện tích, lát sàn, trần, đèn; bố trí nội thất tự động theo cỡ phòng và lối đi; thư viện block động tự dựng (cửa, nội thất, thiết bị, cây, xe, người…).</p>
+
+<h3>Phòng – sàn – trần</h3>
+<ol class="steps">
+  <li><b>Nhãn phòng</b><kbd>PHONG</kbd>: bấm trong phòng → nhãn mã, tên, diện tích, vật liệu sàn (ô "Hiện" chọn mục ghi lên nhãn). Bấm liên tiếp được, mã và tên tự tăng (P01 → P02). <kbd>CNPH</kbd> cập nhật diện tích sau khi sửa tường.</li>
+  <li><b>Lát sàn</b><kbd>LSAN</kbd>; khối lượng lát tính theo gạch đã vẽ.</li>
+  <li><b>Trần</b><kbd>TRAN</kbd> mặt bằng trần giật cấp: cao thành giật cấp (200), rộng khe hắt đèn (150), cao gờ hắt (100); nhãn trần có dòng "S khai triển".</li>
+  <li><b>Đèn, ốp</b><kbd>DEN</kbd> rải đèn; <kbd>OPLEN</kbd> len / ốp tường.</li>
+</ol>
+
+<h3>Bố trí nội thất tự động</h3>
+<figure><img src="../assets/shots/noi-that-pn.webp" width="560" height="400" loading="lazy" alt="Xem trước bố trí phòng ngủ 3,6 × 4,2 m: giường đôi, tủ áo, bàn học, tab đầu giường, cửa đi" style="max-width:420px">
+<figcaption>Khung xem trước bên cạnh bảng Nội thất: phòng ngủ 3,6 × 4,2 m, giường đã giữ vị trí.</figcaption></figure>
+<ol class="steps">
+  <li><b>Chọn lệnh theo phòng</b><kbd>BTPN</kbd> ngủ · <kbd>BTWC</kbd> vệ sinh · <kbd>BTBEP</kbd> bếp · <kbd>BTKHACH</kbd> khách · <kbd>BTAN</kbd> ăn.</li>
+  <li><b>Bấm giữa phòng</b>Bấm liên tiếp nhiều phòng; Enter / ESC để thôi. Phòng hở (bếp + ăn chung): gõ <code>K</code> (khung 2 điểm) rồi bấm hai góc; <code>G</code> quay lại "Giữa phòng".</li>
+  <li><b>Xem phương án</b>Dtool dựng nhiều phương án, xem trước trên bản vẽ; bảng Nội thất + khung xem trước tự mở. <code>Tiep</code> / <code>Truoc</code> đổi phương án.</li>
+  <li><b>Giữ món đã ưng</b>Trên bảng, tích "Mẫu" / "Vị trí" của từng món — <code>Tiep</code> chỉ đổi các món chưa tích.</li>
+  <li><b>Đặt</b>Enter (<code>Chon</code>) → đồ lên lớp <code>KT-NOITHAT</code>; <code>Huy</code> bỏ qua phòng.</li>
+</ol>
+<ul>
+  <li>Tùy chọn: phòng ngủ <code>Giuong</code>, <code>Tuao</code>, <code>Banhoc</code>; WC <code>Khutam</code> (tự chọn / sen tắm mở / vách kính hoặc cabin / bồn tắm); bếp <code>Kieu</code> (chữ I / L), <code>Tutren</code>; khách <code>Sofa</code>, <code>Bantra</code>, <code>Ghedon</code>, <code>Tv</code>; ăn <code>Ghe</code> (số chỗ). Đã chọn mẫu bằng tùy chọn thì <code>Tiep</code> / <code>Truoc</code> chỉ đổi vị trí.</li>
+  <li>Cỡ đồ theo phòng: giường &lt; 9 m² → 1400, 9–12 m² → 1600, ≥ 12 m² → 1800; bàn ăn &lt; 8 m² → 4 chỗ, 8–14 m² → 6, &gt; 14 m² → 8.</li>
+  <li>Khoảng trống giữ: quanh giường 600, lối trước tủ bếp ≥ 900, lối trong WC ≥ 450; giường không chắn lối từ cửa, hai bên lên được.</li>
+</ul>
+
+<h3>Thư viện block động</h3>
+<ol class="steps">
+  <li><b>Mở thư viện</b><kbd>CUATV</kbd> mở thư viện mọi nhóm → chọn mẫu → bấm điểm chèn → chèn tiếp bản sao.</li>
+  <li><b>Đổi hình chiếu, kiểu</b>Nút Hình chiếu (Visibility) cạnh điểm chèn: Mặt bằng / Mặt đứng / Mặt bên / Mặt cắt và các kiểu dáng. Thông số động (Chiều rộng, Dài…) sửa trong Properties hoặc kéo nút.</li>
+  <li><b>Chép, cập nhật</b><kbd>DONG</kbd> chép block động; <kbd>CNTV</kbd> cập nhật block thư viện trong bản vẽ cũ để có hình mới và màu vật liệu.</li>
+</ol>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>PHONG</kbd> · <kbd>CNPH</kbd></td><td>Nhãn phòng · cập nhật phòng</td></tr>
+<tr><td><kbd>LSAN</kbd> · <kbd>TRAN</kbd> · <kbd>DEN</kbd> · <kbd>OPLEN</kbd></td><td>Lát sàn · mặt bằng trần · rải đèn · len / ốp tường</td></tr>
+<tr><td><kbd>BTPN</kbd> <kbd>BTWC</kbd> <kbd>BTBEP</kbd> <kbd>BTKHACH</kbd> <kbd>BTAN</kbd></td><td>Bố trí nội thất phòng ngủ / vệ sinh / bếp / khách / ăn</td></tr>
+<tr><td><kbd>CUATV</kbd> · <kbd>DONG</kbd> · <kbd>CNTV</kbd></td><td>Thư viện block động · chép block động · cập nhật block thư viện</td></tr>
+<tr><td><kbd>DMNT</kbd> · <kbd>TVNGUON</kbd></td><td>Danh mục nội thất của lệnh bố trí · xem dấu bản quyền block thư viện</td></tr>
+</tbody></table></div>
+
+<div class="note"><b>In ấn</b>
+<p>Block thư viện có màu vật liệu trên màn hình (lớp <code>DTOOL-TOMAU</code>, không in — in <code>monochrome.ctb</code> không ra mảng đen) và vệt kính (lớp <code>DTOOL-KINH</code>, có in, nét mảnh). Che nền bằng WIPEOUT nên đồ phía trước che đồ phía sau trên mặt đứng, mặt cắt.</p></div>
+</section>
+
+<section class="sec" id="mat-cat" data-t="Mái, mặt cắt, mặt đứng, chi tiết">
+<h2><span class="n">08</span>Mái, mặt cắt, mặt đứng, chi tiết</h2>
+<p class="lead">Mặt cắt, mặt đứng, chi tiết vẽ theo đúng mặt bằng và liên kết với nó: sửa mặt bằng thì hình tự vẽ lại tại chỗ. Mái dốc kèm mặt bằng mái và khối lượng mái.</p>
+
+<h3>Mái dốc — MAI</h3>
+<ol class="steps">
+  <li><b>Chọn đường bao</b><kbd>MAI</kbd> (nhóm Mái – Mặt đứng): chọn polyline kín theo <b>mặt ngoài tường</b> tầng trên cùng, hoặc chọn mái đã vẽ để sửa. Bấm điểm đặt MẶT BẰNG MÁI (Enter = tại chỗ).</li>
+  <li><b>Tùy chọn</b>Kiểu Nhật (dốc 22°, đua 900, ngói phẳng xám) / Thái (35°, đua 600, ngói đỏ) / Mansard (dưới 70° cao 1,5 m, trên 25°); dạng 4 mái hông / 2 mái đầu hồi; dốc, đua, cao độ chân mái (mặc định đỉnh tầng trên cùng theo <kbd>TANG</kbd>); kết cấu BTCT dán ngói / kèo thép lợp ngói.</li>
+  <li><b>Kết quả</b>Nhà chữ nhật / L / T / U / chữ thập tự chia khối, khe, nóc, sống mái. Mặt bằng mái có diềm, tường dưới mái (nét khuất), ngói theo hướng dốc, mũi tên dốc i %, cốt nóc, ghi chú. Mặt cắt / mặt đứng tự vẽ mái; <kbd>KLKT</kbd> tính ngói, BTCT / kèo, úp nóc, máng khe, diềm, tường thu hồi cho bản vẽ tên "MẶT BẰNG MÁI".</li>
+</ol>
+<figure><img src="../assets/shots/mai-mat-bang.webp" width="1366" height="1222" loading="lazy" alt="Mặt bằng mái Thái bốn mái do lệnh MAI vẽ: đường nóc, đường sống mái, mũi tên độ dốc, cốt nóc, ghi chú diện tích ngói" style="max-width:520px">
+<figcaption>Mặt bằng mái Thái bốn mái do <code>MAI</code> vẽ.</figcaption></figure>
+<p>Nhà MBTD chọn mái ngay ở bảng Thiết kế mục 2; Dtool tự lấp khe hẹp &lt; 1,2 m và bỏ sân thượng / ban công khỏi đường bao mái.</p>
+
+<h3>Mặt cắt</h3>
+<ul>
+  <li><b>Nhà MBTD</b>: bảng Thiết kế mục 4, ô "Mặt cắt": Không vẽ / <b>Tự đặt</b> 1–4 mặt cắt (A-A dọc + B-B ngang qua thang, C-C ngang qua khối phòng lớn, D-D dọc phía còn lại) / <b>Tự chọn vị trí</b> (mỗi mặt cắt dọc / ngang, vị trí mm, hướng nhìn; tối đa 4; nút "Lấy vị trí tự đặt"). Cắt tay: <kbd>MBTDMC</kbd>.</li>
+  <li><b>Bản vẽ khác</b>: <kbd>MCAT</kbd> cắt theo mặt bằng (cần khai báo tầng <kbd>TANG</kbd> hoặc nhập cao các tầng trong hộp).</li>
+  <li>Đường cắt rơi vào lòng tường song song thì tự dời ra chỗ thoáng.</li>
+  <li>Mặt cắt có: tiết diện cửa bị cắt (block cửa "Mặt cắt"), lớp hoàn thiện sàn (vữa + gạch, phòng ngủ sàn gỗ; ghi chú "CẤU TẠO SÀN"), trần, dầm, hố pit thang máy, tam cấp theo cốt sân, mái, lan can ban công / sân thượng, đồ nội thất (đồ trước che đồ sau). Bê tông bị cắt tô đặc.</li>
+</ul>
+<figure><img src="../assets/shots/cad-mat-cat.webp" width="700" height="699" loading="lazy" alt="Mặt cắt A-A năm tầng: cao độ từng sàn, cửa nhôm kính, WC, giường, bàn ăn, sofa, thang máy với hố pit" style="max-width:480px">
+<figcaption>Mặt cắt A-A nhà 5 tầng có thang máy — hố pit vẽ tự động.</figcaption></figure>
+
+<h3>Mặt đứng — MDMB</h3>
+<ol class="steps">
+  <li><b>Đường nhìn</b><kbd>MDMB</kbd>: bấm 2 điểm của đường nhìn <b>ở ngoài nhà</b> (tự nắn ngang / dọc), rồi một điểm về phía nhà.</li>
+  <li><b>Tên, phong cách</b>Tên (mặc định "MẶT ĐỨNG CHÍNH"), <code>Hiendai</code> / <code>Tancodien</code>, điểm đặt (gốc trái tại cốt ±0.000).</li>
+  <li><b>Kết quả</b>Mỗi tầng lấy mặt tường thấy đầu tiên: cửa theo hình mặt đứng của block, lan can, mái, tam cấp, cao độ, DIM cao tầng, trục. Tân cổ điển: phào tầng, phào đỉnh, mũ cửa, cột ốp, lan can con tiện bằng block thư viện. Chưa khai báo <kbd>TANG</kbd>: Dtool hỏi thêm độ sâu nhìn.</li>
+</ol>
+<p>Nhà MBTD: bảng Thiết kế mục 4, ô "Mặt đứng": Không vẽ / Mặt tiền / Mặt tiền + mặt sau / Cả 4 mặt.</p>
+<figure><img src="../assets/shots/mai-tcd.webp" width="734" height="1319" loading="lazy" alt="Mặt đứng chính nhà phố bốn tầng kiểu tân cổ điển có mái Mansard, cột ốp, lan can con tiện, mũ cửa" style="max-width:340px">
+<figcaption>Mặt đứng tân cổ điển, mái Mansard.</figcaption></figure>
+
+<h3>Chi tiết</h3>
+<ul>
+  <li><kbd>TCT</kbd> trích chi tiết; <kbd>DIMCT</kbd> chọn hình chi tiết → tự DIM tường / cột / ô cửa; <kbd>CNCT</kbd> cập nhật.</li>
+  <li><kbd>CTWC</kbd> chi tiết WC: mặt bằng + mặt cắt 1-1 / 2-2 theo đúng thiết bị trong phòng.</li>
+  <li><kbd>CTBP</kbd> bể phốt, <kbd>CTBN</kbd> bể nước: bấm góc trái dưới là vẽ cả bộ (mặt bằng, mặt cắt A-A / B-B, ghi chú), dung tích theo số người; tích "Vẽ kèm chi tiết thép bể" để có luôn kết cấu thép bể.</li>
+  <li><kbd>THANG</kbd> cầu thang: thông số trên bảng Tiện ích (7 kiểu như khung kéo thả), chỉ chọn điểm gốc + hướng.</li>
+</ul>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>MAI</kbd></td><td>Mái dốc + mặt bằng mái (chọn mái đã vẽ để sửa)</td></tr>
+<tr><td><kbd>MCAT</kbd> · <kbd>MBTDMC</kbd></td><td>Mặt cắt · mặt cắt thủ công cho nhà MBTD</td></tr>
+<tr><td><kbd>MDMB</kbd> · <kbd>MDUNG</kbd></td><td>Mặt đứng theo mặt bằng · mặt đứng sơ đồ theo hộp thông số</td></tr>
+<tr><td><kbd>SCT</kbd></td><td>Sửa hình đã vẽ: mở lại hộp với thông số cũ, vẽ lại tại chỗ</td></tr>
+<tr><td><kbd>CNMC</kbd> · <kbd>TDMC</kbd></td><td>Cập nhật mặt cắt / mặt đứng / chi tiết (<code>Chon</code> / <code>Tatca</code>) · bật / tắt tự cập nhật</td></tr>
+<tr><td><kbd>THANG</kbd></td><td>Cầu thang</td></tr>
+<tr><td><kbd>TCT</kbd> · <kbd>DIMCT</kbd> · <kbd>CNCT</kbd></td><td>Trích · DIM · cập nhật chi tiết</td></tr>
+<tr><td><kbd>CTWC</kbd> · <kbd>CTBP</kbd> · <kbd>CTBN</kbd> · <kbd>CTBE</kbd></td><td>Chi tiết WC · bể phốt · bể nước · thép bể</td></tr>
+</tbody></table></div>
+
+<div class="tip"><b>Tự vẽ lại</b>
+<ul>
+  <li>Chữ, DIM, ghi chú anh vẽ thêm cạnh hình được giữ khi hình tự vẽ lại. <kbd>U</kbd> lần đầu chỉ bỏ phần tự vẽ lại.</li>
+  <li>Sửa mặt bằng nhiều lần liên tiếp: tắt <kbd>TDMC</kbd> cho nhanh, sửa xong gõ <kbd>CNMC</kbd> → <code>Tatca</code>.</li>
+</ul></div>
+</section>
+
+<section class="sec" id="kl-kt" data-t="Kích thước và khối lượng kiến trúc">
+<h2><span class="n">09</span>Kích thước và khối lượng kiến trúc</h2>
+<p class="lead">DIM theo chuẩn TCVN 5705 (mỗi tỉ lệ một kiểu <code>DTOOL_1-N</code>), ghi chú, và khối lượng xây – trát – sơn – lát – ốp – trần – cửa – mái ra Excel theo từng bản vẽ và toàn nhà.</p>
+
+<h3>Kích thước, ghi chú</h3>
+<ol class="steps">
+  <li><b>Đặt chuẩn</b><kbd>CHUAN</kbd>: cao chữ, gạch chéo / mũi tên, độ dày gạch, gióng, khung bản vẽ… Tích "Áp dụng cho các DIM đã có trong Model" để đưa DIM cũ về chuẩn.</li>
+  <li><b>DIM mặt bằng</b><kbd>DIMMB</kbd>: chọn vùng bằng hai góc → mỗi phía 3 hàng: chi tiết (mép tường, ô cửa), trục, tổng. Bấm chỗ đặt hàng ngang rồi hàng đứng.</li>
+  <li><b>Ghi chú</b><kbd>KH</kbd> ký hiệu, <kbd>GCH</kbd> ghi chú (đặt liên tục), <kbd>STXT</kbd> sửa chữ, <kbd>SDIM</kbd> sửa DIM.</li>
+</ol>
+
+<h3>Khối lượng ra Excel — KLKT</h3>
+<ol class="steps">
+  <li><b>Đặt tên bản vẽ theo công việc</b>Mỗi mặt bằng một tên "MẶT BẰNG …" có <b>chữ khóa</b>: XÂY, TRÁT / SƠN (thêm NGOÀI cho mặt ngoài), LÁT, ỐP, TRẦN, CỬA, MÁI — trong khung bản vẽ hoặc ngay dưới mặt bằng. Ví dụ: "MẶT BẰNG XÂY TƯỜNG TẦNG 1", "MẶT BẰNG TRÁT NGOÀI TẦNG 2".</li>
+  <li><b>Tường có cao / tầng</b>Tường vẽ bằng bảng Tường đã có; tường cũ dùng <kbd>GCAO</kbd>.</li>
+  <li><b>Trát – sơn</b>Trong phòng: <kbd>TSON</kbd>. Mặt ngoài: <kbd>TNGOAI</kbd> → Tạo → bấm hai góc quanh mặt bằng tầng.</li>
+  <li><b>Soát</b><kbd>SKL</kbd> báo dữ liệu thiếu (tường thiếu cao, cửa chưa gắn tường, phòng mất biên…).</li>
+  <li><b>Xuất</b><kbd>KLKT</kbd> → Excel chia mục "BẢN VẼ: …" + TOÀN NHÀ; lệnh tự liên kết tên bản vẽ, gắn ID cấu kiện. Sửa bản vẽ xong: <kbd>KLKTCN</kbd> ghi đè file Excel đã xuất.</li>
+</ol>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>CHUAN</kbd></td><td>Chuẩn DIM, chữ, layer, khung bản vẽ</td></tr>
+<tr><td><kbd>DIMMB</kbd> · <kbd>SDIM</kbd></td><td>DIM mặt bằng · sửa DIM</td></tr>
+<tr><td><kbd>KH</kbd> · <kbd>GCH</kbd> · <kbd>STXT</kbd></td><td>Ký hiệu · ghi chú · sửa chữ</td></tr>
+<tr><td><kbd>KLKT</kbd> · <kbd>KLKTCN</kbd></td><td>Khối lượng ra Excel · cập nhật Excel đã có</td></tr>
+<tr><td><kbd>TSON</kbd> · <kbd>TNGOAI</kbd></td><td>Trát – sơn phòng · trát – sơn mặt ngoài</td></tr>
+<tr><td><kbd>GCAO</kbd> · <kbd>SKL</kbd></td><td>Gán cao / dày tường · soát dữ liệu</td></tr>
+<tr><td><kbd>LKBV</kbd> · <kbd>TIMID</kbd> · <kbd>THKL</kbd></td><td>Liên kết bản vẽ (<code>Tudong</code> / <code>Xem</code> / <code>Xoa</code>) · tìm cấu kiện theo ID · bảng tổng hợp trong bản vẽ</td></tr>
+</tbody></table></div>
+
+<div class="note"><b>Lưu ý</b>
+<ul>
+  <li>Tên chung chung như "MẶT BẰNG TẦNG 1" bị bỏ qua để tránh tính trùng — bản chép để trát, lát nên đặt tên theo công việc.</li>
+  <li>Mỗi cấu kiện có một ID cố định; cùng cấu kiện ở các bản vẽ của cùng tầng mang cùng ID.</li>
+  <li>Giếng trời / sân trong: nhãn phòng có chữ "GIẾNG TRỜI", "SÂN TRONG" hoặc "LỖ THOÁNG" để tính trát / sơn ngoài quanh lòng.</li>
+  <li>Tường xiên được tách mảng riêng (tường xiên &lt;góc&gt;°), tổng vẫn khớp.</li>
+  <li>Khối xây tính chậm hơn (~20 s / mặt bằng); chỉ tính cho bản vẽ có chữ XÂY.</li>
+</ul></div>
+</section>
+
+<section class="sec" id="ho-so-kt" data-t="Bảng thống kê, dàn trang, in bộ">
+<h2><span class="n">10</span>Bảng thống kê, dàn trang, in bộ</h2>
+<p class="lead">Bảng diện tích, hoàn thiện, cửa; dàn trang hồ sơ kiến trúc tự động có khung tên, danh mục; in cả bộ ra một file PDF.</p>
+
+<h3>Bảng thống kê</h3>
+<p><kbd>BDT</kbd> bảng diện tích · <kbd>BHT</kbd> bảng hoàn thiện · <kbd>BSAN</kbd> bảng lát sàn · <kbd>BCUA</kbd> bảng cửa · <kbd>DEMTB</kbd> đếm thiết bị.</p>
+
+<h3>Dàn trang — DTRKT</h3>
+<ol class="steps">
+  <li><b>Chọn khổ, thông tin</b><kbd>DTRKT</kbd>: khổ A4 đứng / A4 ngang / A3 / A2 / A1, tiền tố số hiệu (mặc định <code>KT-</code>), người vẽ, kiểm tra; dàn trên <b>Layout</b> hoặc <b>Model</b>; "Xếp kín tối đa" nếu muốn ít tờ nhất.</li>
+  <li><b>Dtool tìm hình</b>Mặt bằng các tầng (vùng tầng MBTD / <kbd>TANG</kbd>, hoặc cụm có tên "MẶT BẰNG …"), mặt cắt, mặt đứng, chi tiết (hình Dtool vẽ, hoặc cụm có tên "MẶT CẮT / MẶT ĐỨNG / CHI TIẾT / SƠ ĐỒ …"), các bảng thống kê.</li>
+  <li><b>Kết quả</b>Mỗi hình giữ tỉ lệ của nó; khung tên 180 × 50 ghi "TL 1:n" (nhiều tỉ lệ: "Như hình"); trang danh mục KT-00. Chạy lại <kbd>DTRKT</kbd> thì thay bộ trang lần trước của chính nó.</li>
+  <li><b>In</b><kbd>INBO</kbd>: Toàn bộ Layout hoặc Model, chọn trang; máy in (mặc định DWG To PDF), khổ theo từng tờ, <code>monochrome.ctb</code>, Đúng tỉ lệ / Vừa khổ → <b>một file PDF nhiều trang</b>.</li>
+</ol>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>BDT</kbd> · <kbd>BHT</kbd> · <kbd>BSAN</kbd></td><td>Bảng diện tích · hoàn thiện · lát sàn</td></tr>
+<tr><td><kbd>BCUA</kbd> · <kbd>DEMTB</kbd></td><td>Bảng cửa · đếm thiết bị</td></tr>
+<tr><td><kbd>DTRKT</kbd></td><td>Dàn trang hồ sơ kiến trúc</td></tr>
+<tr><td><kbd>INBO</kbd></td><td>In bộ (Layout / Model) ra một PDF</td></tr>
+<tr><td><kbd>KTEN</kbd> · <kbd>KTRA</kbd> · <kbd>XPDF</kbd></td><td>Khung tên · kiểm tra · xuất PDF</td></tr>
+</tbody></table></div>
+
+<div class="tip"><b>Mẹo</b>
+<ul>
+  <li><kbd>DTRKT</kbd> không lấy: lớp tắt / không in, khung tên vẽ sẵn trong Model, chi tiết thép kết cấu (phần đó do <kbd>DTR</kbd> lo).</li>
+  <li>Cụm hình không có tên được báo ở dòng lệnh — thêm tên "MẶT BẰNG …" / "CHI TIẾT …" để được dàn.</li>
+  <li>Nhà phố hẹp: khổ A4 đứng đặt được mặt bằng 1:100.</li>
+</ul></div>
+</section>
+
+<section class="sec part" id="mong" data-t="Kết cấu móng">
+<h2><span class="n">11</span>Kết cấu móng</h2>
+<p class="lead">Móng đơn (M1…), móng băng (MB1…), đài cọc (MC1…), giằng móng (GM…) và cọc BTCT đúc sẵn: mặt bằng móng, mặt cắt, chi tiết thép, bảng thống kê, khối lượng ra Excel. Nhóm <span class="ui">MÓNG</span> trên tab Kết Cấu.</p>
+
+<ol class="steps">
+  <li><b>Khai báo móng</b><kbd>QLM</kbd>: chọn loại móng, <span class="ui">+ Thêm</span> / nhân bản, nhập kích thước, cao độ, thép; xem trước mặt bằng, mặt cắt, bảng thép. <span class="ui">Thông số chung</span>: mác bê tông, loại thép, lớp bảo vệ, tỉ lệ, tiền tố layer. Lệch tâm: móng đơn / đài cọc nhập <code>ex</code>, <code>ey</code>; móng băng nhập độ lệch tim sườn so với tim bản.</li>
+  <li><b>Lưới trục</b><kbd>LUOI</kbd> (khoảng trục dạng <code>3600 4200</code> hoặc <code>3x3600</code>, tên trục bắt đầu, bóng trục, kích thước), hoặc dùng lưới trục có sẵn của bản vẽ kiến trúc.</li>
+  <li><b>Mặt bằng móng</b>Nhanh: <kbd>MBM</kbd> — chọn móng băng theo trục (liên tục / từng nhịp, lọc trục kiểu <code>1,3,A-C</code>), móng đơn / đài cọc tại giao trục, giằng nối các móng, bấm giao trục 1-A là xong. Từng cấu kiện: <kbd>DM</kbd> đặt móng đơn / đài (gõ <code>X</code> xoay 90°), <kbd>MBA</kbd> móng băng qua 2 giao trục, <kbd>GM</kbd> giằng giữa tâm 2 cột.</li>
+  <li><b>Giao móng băng</b><kbd>GMB</kbd> cắt nét chỗ móng băng giao nhau — tự chạy sau MBA / MBM / QLM; chạy lại sau khi MOVE / COPY / xóa móng bằng lệnh AutoCAD.</li>
+  <li><b>Chi tiết</b><kbd>CTM</kbd> một móng, <kbd>CTMN</kbd> nhiều móng: mặt bằng, mặt cắt 1-1 / 2-2, bảng thép, ghi chú.</li>
+  <li><b>Thống kê, khối lượng</b><kbd>TKM</kbd> bảng thép vào bản vẽ; <kbd>KLM</kbd> đếm móng đã đặt, tính khối lượng, xuất Excel.</li>
+</ol>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>QLM</kbd> · <kbd>-QLM</kbd></td><td>Quản lý móng (hộp thoại · dòng lệnh)</td></tr>
+<tr><td><kbd>LUOI</kbd> · <kbd>MBM</kbd></td><td>Lưới trục · vẽ nhanh cả mặt bằng móng</td></tr>
+<tr><td><kbd>DM</kbd> · <kbd>MBA</kbd> · <kbd>GM</kbd></td><td>Đặt móng đơn / đài cọc · móng băng · giằng móng</td></tr>
+<tr><td><kbd>GMB</kbd></td><td>Cắt nét chỗ móng băng giao nhau</td></tr>
+<tr><td><kbd>CTM</kbd> · <kbd>CTMN</kbd></td><td>Chi tiết một / nhiều móng</td></tr>
+<tr><td><kbd>TKM</kbd> · <kbd>KLM</kbd></td><td>Bảng thép vào CAD · khối lượng ra Excel</td></tr>
+<tr><td><kbd>CN</kbd> · <kbd>TEN</kbd> · <kbd>MAU</kbd></td><td>Cập nhật ký hiệu và chi tiết · đổi tên đối tượng chọn · tạo bản vẽ mẫu để xem cách dùng</td></tr>
+</tbody></table></div>
+
+<h3>Giằng móng và cọc</h3>
+<ul>
+  <li><b>Giằng</b>: b × h, cốt đỉnh, lót, thép trên / dưới / giá, neo vào cổ móng; đai dày vùng gối (mặc định L/4 mỗi đầu). Khối lượng theo tổng chiều dài các đoạn đã vẽ; các đoạn thẳng hàng qua tâm cột gom thành một tuyến thép liên tục, dài hơn cây thép thì cộng mối nối chồng theo TCVN 5574:2018. Ô <code>Neo</code> = 0 thì lấy neo theo TCVN.</li>
+  <li><b>Cọc BTCT</b>: cạnh, chiều dài, số đoạn, thép dọc 4 / 8 thanh, đai đầu đoạn, lưới đầu cọc, thép mũi, bản mã nối. Số cọc tự lấy theo tổng cọc trong các đài cùng cạnh cọc; Excel tách bê tông, ván khuôn, thép cọc, thép bản mã.</li>
+</ul>
+
+<div class="tip"><b>Mẹo</b>
+<ul>
+  <li>Sửa thông số trong QLM thì mọi ký hiệu đã đặt tự cập nhật; cần thì chạy <kbd>CN</kbd>.</li>
+  <li>Số lượng: tích "Đếm số lượng theo móng đã đặt trên bản vẽ", hoặc bỏ tích và nhập số móng giống nhau.</li>
+  <li>Điểm chèn móng là tâm cột / tim tường. Cột biên, cột góc: xoay bằng <code>X</code> (đủ 4 hướng). Móng băng lệch tâm: sườn lệch về bên trái theo chiều vẽ — muốn lệch bên kia thì vẽ ngược chiều.</li>
+  <li>Chi tiết vẽ 1:1, chữ và kích thước theo tỉ lệ (mặc định 1:25, kiểu DIM <code>DTOOL_1-25</code>).</li>
+</ul></div>
+</section>
+
+<section class="sec" id="dam" data-t="Kết cấu dầm">
+<h2><span class="n">12</span>Kết cấu dầm</h2>
+<p class="lead">Khai báo dầm theo nhịp, đặt lên mặt bằng; Dtool vẽ khai triển, mặt cắt, bảng thép và xuất khối lượng. Nhóm <span class="ui">DẦM</span> trên tab Kết Cấu.</p>
+
+<ol class="steps">
+  <li><b>Dựng lưới trục</b><code>LUOI</code> (xem <a href="#tang">Tầng, lưới trục</a>).</li>
+  <li><b>Khai báo dầm</b><kbd>QLD</kbd> → tạo D1, D2…: b × h, dày sàn, các nhịp trục–trục (vd. <code>4200 3600 4200</code>), bề rộng cột, công xôn trái / phải, cốt đỉnh; thép chủ trên / dưới, mũ gối, gia cường nhịp, thép giá, đai. Ô xem trước vẽ ngay khai triển, mặt cắt, bảng thép.</li>
+  <li><b>Thông số chung</b>Nút <span class="ui">Thông số chung…</span> trong QLD: bê tông, mác thép, lớp bảo vệ, nối chồng, chiều dài cây thép, tỉ lệ chi tiết / mặt bằng, trừ giao nhau dầm.</li>
+  <li><b>Đặt lên mặt bằng</b><kbd>MBD</kbd> vẽ theo lưới trục (dầm theo trục chữ / trục số, lọc trục, cột tại giao trục) hoặc <kbd>DD</kbd> bấm lần lượt tâm các cột gối, Enter kết thúc.</li>
+  <li><b>Vẽ chi tiết</b><kbd>CTD</kbd> một dầm, <kbd>CTDN</kbd> (nút <span class="ui">Vẽ nhiều dầm…</span>) nhiều dầm — gõ <code>*</code> là tất cả.</li>
+  <li><b>Thống kê</b><kbd>KLD</kbd> ra Excel, <kbd>TKD</kbd> bảng thống kê thép trong bản vẽ.</li>
+</ol>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>QLD</kbd> · <kbd>-QLD</kbd></td><td>Quản lý dầm (hộp thoại · dòng lệnh / script)</td></tr>
+<tr><td><kbd>MBD</kbd> · <kbd>-MBD</kbd></td><td>Vẽ nhanh mặt bằng dầm theo lưới trục</td></tr>
+<tr><td><kbd>DD</kbd></td><td>Đặt dầm qua tâm các cột gối</td></tr>
+<tr><td><kbd>GDA</kbd></td><td>Vẽ lại đường bao dầm, tự cắt chỗ giao dầm, chỗ cột</td></tr>
+<tr><td><kbd>CTD</kbd> · <kbd>CTDN</kbd></td><td>Chi tiết một dầm · nhiều dầm</td></tr>
+<tr><td><kbd>KLD</kbd> · <kbd>TKD</kbd></td><td>Khối lượng ra Excel · bảng thép ra CAD</td></tr>
+<tr><td><kbd>CN</kbd> · <kbd>TEN</kbd></td><td>Vẽ lại mọi chi tiết theo thông số mới · đổi tên đối tượng đang chọn</td></tr>
+</tbody></table></div>
+
+<h3>Thông số hay dùng</h3>
+<ul>
+  <li><b>Chiều cao theo nhịp</b>: cột "Chiều cao h" trong bảng nhịp (nhấp đúp ô để nhập). Mỗi chiều cao có cặp mặt cắt riêng.</li>
+  <li><b>Vị trí dầm</b>: tự nhận dầm biên / dầm giữa theo mặt bằng, hoặc chọn cố định. Dầm biên: ván khuôn thành ngoài tính đủ h, thành trong tính h − dày sàn.</li>
+  <li><b>Khai báo theo bản vẽ thiết kế</b> (để trống thì Dtool tự tính): <code>truc</code> tên trục các gối, <code>cotgoi</code> cột trái / phải trục từng gối, <code>them</code> thép bổ sung (<code>T</code>/<code>B</code> + <code>số×Ø</code> + <code>:x1:x2</code>, <code>:2</code> = hàng 2 — có <code>them</code> thì bỏ mũ gối / gia cường tự tính), <code>daigoi</code> vùng đai dày từng nhịp, <code>hsp</code> chiều cao từng nhịp, <code>goidam</code> gối là dầm đỡ, <code>daigc</code> đai gia cường (Ø6 a50, Ø8 a60, Ø10 a80, Ø12 a90), <code>keoL</code> / <code>keoR</code> thép trên kéo qua gối vào sàn, <code>nh=1</code> đai một nhánh.</li>
+  <li>Dòng lệnh <kbd>-QLD</kbd>: dùng dấu phẩy thay khoảng trắng; <code>sl=n</code> = số lượng nhập tay.</li>
+</ul>
+
+<h3>Chi tiết thép, nối, neo (TCVN 5574:2018)</h3>
+<ul>
+  <li><b>Chia đoạn theo cây thép</b>: thanh dài hơn cây (mặc định 11 700) tự chia đoạn, vẽ hình chi tiết thép với vùng nối gạch chéo và elip mối nối. Chọn "Mọi dầm" / "Không" trong Thông số chung.</li>
+  <li><b>Nối chồng so le</b> hai mẫu A / B, tâm hai mối nối cạnh nhau cách ≥ 1,3 L<sub>nối</sub> (≤ 50 % số thanh nối tại một tiết diện). Vùng được nối: thép trên giữa nhịp (cách mép gối ≥ L<sub>n</sub>/4), thép dưới trong L<sub>n</sub>/4 từ mép gối; không nối trong công xôn.</li>
+  <li>Mối nối buộc phải nằm ngoài vùng được nối đánh dấu <b>(*)</b> kèm ghi chú đề nghị thiết kế xác nhận — thường gặp ở nhịp dài hơn ~2 lần cây thép (cần nối cơ khí hoặc thanh đặt dài).</li>
+  <li>Đầu thanh trong gối: gối cột lùi 60 mm từ mặt ngoài cột; gối dầm lùi c + Ø đai + 10.</li>
+  <li>Thép sàn lớp trên đặt trên thép dầm: lớp bảo vệ mặt trên dầm tự tính theo chồng thép của sàn cùng bề dày.</li>
+</ul>
+
+<div class="tip"><b>Mẹo</b>
+<ul>
+  <li>Đóng QLD là chi tiết của dầm đã đổi được vẽ lại đúng chỗ — chỉnh tay trên chi tiết sẽ mất.</li>
+  <li><span class="ui">Lưu mẫu / Lấy mẫu</span> dùng chung trên máy; <span class="ui">Xuất / Nhập dự án</span> chép cấu kiện sang bản vẽ khác.</li>
+  <li>Khối lượng dầm: bê tông từ đáy sàn, giữa mép cột; tự trừ phần giao nhau dầm (tắt được trong Thông số chung).</li>
+  <li>Ký hiệu thép là block động <code>DTOOL_KYHIEU_THEP</code>, sửa được (giữ các thuộc tính).</li>
+</ul></div>
+</section>
+
+<section class="sec" id="than" data-t="Kết cấu phần thân: cột, vách, thang, bể">
+<h2><span class="n">13</span>Kết cấu phần thân: cột, vách, thang, bể</h2>
+<p class="lead">Cột, vách, lanh tô, ô văng, thang bộ, bể ngầm — khai báo trong <kbd>QLTH</kbd> (nhóm <span class="ui">THÂN</span>), đặt lên mặt bằng, vẽ chi tiết thép, thống kê. Thông số chung (bê tông, thép, nối chồng, tỉ lệ) dùng chung với dầm.</p>
+
+<ol class="steps">
+  <li><b>Khai báo</b><kbd>QLTH</kbd> (cả phần thân) hoặc theo loại: <kbd>QLC</kbd> cột · <kbd>QLV</kbd> vách · <kbd>QLLT</kbd> lanh tô · <kbd>QLOV</kbd> ô văng · <kbd>QLTB</kbd> thang bộ · <kbd>QLBE</kbd> bể ngầm. Mỗi cấu kiện có ô Lớp BT bảo vệ riêng; xem trước ngay khi gõ số.</li>
+  <li><b>Đặt lên mặt bằng</b><kbd>DCOT</kbd> cột (bấm tâm, <code>Xoay</code>, <code>Giaotruc</code> = mọi giao trục) · <kbd>DVACH</kbd> vách (hai đầu) · <kbd>DLT</kbd> lanh tô (hai mép ô cửa) · <kbd>DOVA</kbd> ô văng (hai đầu dọc tường, vươn bên phải hướng bấm) · <kbd>DTB</kbd> thang · <kbd>DBE</kbd> bể. Nút <span class="ui">Đặt lên bản vẽ</span> trong QLTH gọi đúng lệnh theo loại.</li>
+  <li><b>Chi tiết</b><kbd>CTC</kbd> · <kbd>CTV</kbd> · <kbd>CTLT</kbd> · <kbd>CTOV</kbd> · <kbd>CTTB</kbd> · <kbd>CTBE</kbd>; nhiều cấu kiện: <kbd>CTNT</kbd>.</li>
+  <li><b>Thống kê</b><kbd>TKTH</kbd> bảng thép vào bản vẽ; <kbd>KLTH</kbd> khối lượng ra Excel.</li>
+</ol>
+
+<h3>Cột</h3>
+<ul>
+  <li><b>Cột nhiều tầng</b>: số tầng cột đi qua, cao tầng 1 / tầng điển hình, cốt chân. Tầng liên tiếp giống nhau chỉ vẽ một tầng, ghi "TẦNG 2 ÷ 5 (4 tầng giống nhau)"; khối lượng vẫn đủ.</li>
+  <li>Mặt đứng: thép chờ + nối chồng TCVN 5574:2018 (so le hai đợt, nhóm sau nối cao hơn 1,3 L<sub>nối</sub>), đai răng lược theo vùng (dày hai đầu = max(cạnh lớn, H/6, 500)), đai dày trong nút; mặt cắt có thép dọc, đai, đai móc.</li>
+  <li><b>Khai báo từng tầng theo bản vẽ thiết kế</b> (shop drawing): thông số <code>tang</code> = <code>mã:H:Ø:vùng đai dày</code> mỗi tầng từ dưới lên (vd <code>H:3500:22:2000,1:4500:22:2000</code>); <code>nhom</code> nhóm nối từng hàng thanh; <code>giang</code> hàng có đai móc; <code>top=1</code> tầng trên cùng bẻ neo vào dầm; <code>cho</code> thép chờ cột phía trên; <code>hsTren</code> bê tông tới đáy sàn trên.</li>
+  <li>Số cột tự đếm theo số block đã đặt bằng <kbd>DCOT</kbd>.</li>
+</ul>
+
+<h3>Thang bộ từ thang kiến trúc — KCTB</h3>
+<figure><img src="../assets/shots/kctb.webp" width="1400" height="555" loading="lazy" alt="Mặt cắt kết cấu thang bộ quanh thang máy: vế thang, chiếu nghỉ, dầm chiếu nghỉ, ký hiệu thép theo số hiệu, cao độ">
+<figcaption>Mặt cắt kết cấu thang bộ quanh thang máy do <code>KCTB</code> dựng từ thang kiến trúc.</figcaption></figure>
+<ol class="steps">
+  <li><b>Chọn thang kiến trúc</b><kbd>KCTB</kbd>: chọn một nét của cầu thang vẽ bằng <kbd>THANG</kbd> (hoặc thang của nhà MBTD).</li>
+  <li><b>Tên</b>Enter = TB tiếp theo; gõ tên đã có = cập nhật hình học thang đó (giữ bản dày, dầm, thép; chi tiết đã vẽ tự vẽ lại).</li>
+  <li><b>Điểm đặt chi tiết</b>Enter = không vẽ. Kiểu thang, cao tầng, số bậc, mặt bậc, vế, chiếu nghỉ / bậc quạt, giếng thang, lõi thang máy, thang tròn lấy đúng như hình kiến trúc.</li>
+</ol>
+<ul>
+  <li>Đủ 7 kiểu thang kiến trúc: 1 vế, 2 vế thẳng, chữ L, chữ U, 3 vế, quanh thang máy, thang tròn (trụ giữa + bậc công xôn).</li>
+  <li>Sơ đồ: bản thang kê lên dầm chiếu tới (ở sàn) và dầm chiếu nghỉ DCN (chữ U một dầm suốt; góc 90° dầm gãy góc chữ L); chiếu nghỉ = ô bản lưới 2 phương; bậc quạt = bản xoắn liền vế.</li>
+  <li>Chi tiết: mặt bằng kết cấu thang, mặt cắt dọc từng dãy vế, mặt cắt ngang vế, chi tiết dầm chiếu nghỉ, bảng thép. Dầm chiếu nghỉ thấp hơn đáy bản thang thì tự nâng (có báo).</li>
+</ul>
+
+<h3>Vách, lanh tô, ô văng, bể</h3>
+<ul>
+  <li><b>Vách</b>: mặt cắt ngang (thép đứng 2 lớp, thép ngang bao U, cấu kiện biên có đai, móc C), mặt đứng. <b>Vách tầng hầm theo mặt bằng</b> (vách chắn đất chạy vòng): thông số <code>nguon</code> = tệp dữ liệu đa giác mặt ngoài + các loại vách → mặt bằng vách, mặt cắt từng loại, khai triển, chi tiết góc, băng cản nước.</li>
+  <li><b>Lanh tô</b>: mặt cắt dọc (gối kê tường), mặt cắt ngang. <b>Ô văng</b>: phẳng, dốc liền sàn, treo dưới dầm, tai sàn; dải mái dốc quanh vòm mái (<code>vom=1</code>).</li>
+  <li><b>Bể ngầm</b> (<kbd>QLBE</kbd> / <kbd>CTBE</kbd>): thành BTCT hoặc thành xây gạch; lòng L × B × H, 0–2 vách ngăn, lỗ thăm; thép đáy 2 lớp, thành 2 lớp, thép ngang vòng kín, nắp + gia cường lỗ thăm; mặt cắt 1-1 / 2-2 / 3-3, mặt bằng thép đáy, nắp.</li>
+</ul>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>QLTH</kbd> · <kbd>-QLTH</kbd> · <kbd>-SUACK</kbd></td><td>Quản lý phần thân · thêm bằng dòng lệnh · sửa cấu kiện bằng dòng lệnh</td></tr>
+<tr><td><kbd>QLC</kbd> <kbd>QLV</kbd> <kbd>QLLT</kbd> <kbd>QLOV</kbd> <kbd>QLTB</kbd> <kbd>QLBE</kbd></td><td>Quản lý cột / vách / lanh tô / ô văng / thang / bể</td></tr>
+<tr><td><kbd>DCOT</kbd> <kbd>DVACH</kbd> <kbd>DLT</kbd> <kbd>DOVA</kbd> <kbd>DTB</kbd> <kbd>DBE</kbd></td><td>Đặt lên mặt bằng</td></tr>
+<tr><td><kbd>KCTB</kbd></td><td>Thang bộ kết cấu từ thang kiến trúc</td></tr>
+<tr><td><kbd>CTC</kbd> <kbd>CTV</kbd> <kbd>CTLT</kbd> <kbd>CTOV</kbd> <kbd>CTTB</kbd> <kbd>CTBE</kbd> · <kbd>CTNT</kbd></td><td>Chi tiết từng loại · nhiều cấu kiện</td></tr>
+<tr><td><kbd>TKTH</kbd> · <kbd>KLTH</kbd></td><td>Bảng thép vào CAD · khối lượng ra Excel</td></tr>
+</tbody></table></div>
+
+<div class="tip"><b>Đếm theo mặt bằng</b>
+<p>Tích "Đếm số lượng theo bản vẽ": cột, thang theo số block; vách, lanh tô, ô văng theo từng đoạn và nhóm theo chiều dài; chi tiết vẽ theo kích thước gặp nhiều nhất, Excel tách dòng theo từng kích thước. Sửa cấu kiện trong QLTH thì chi tiết và bảng thép đã vẽ tự vẽ lại.</p></div>
+</section>
+
+<section class="sec" id="san" data-t="Kết cấu sàn">
+<h2><span class="n">14</span>Kết cấu sàn</h2>
+<p class="lead">Ô sàn bản kê 4 cạnh, bản dầm, công xôn; vẽ sàn tự động theo dầm; thép sàn chạy liền mạch theo cả mặt bằng như thi công thật. Nhóm <span class="ui">SÀN</span> trên tab Kết Cấu.</p>
+
+<ol class="steps">
+  <li><b>Khai báo loại sàn</b><kbd>QLS</kbd>: kiểu sàn (0 bản kê 4 cạnh · 1 bản dầm một phương · 2 công xôn), Lx × Ly, chiều dày, thép dưới hai phương, <b>thép lớp trên</b>: <i>thép mũ tại gối</i> (vươn kM × Ln từ mép dầm, có móc) hoặc <i>lưới 2 lớp chạy suốt</i> (không thép mũ).</li>
+  <li><b>Đặt ô sàn</b><kbd>SANTD</kbd> tự động: quét vùng mặt bằng kết cấu (Enter = cả bản vẽ), nhập chiều dày → mỗi vùng chữ nhật có dầm bao kín thành một ô; ô cùng kích thước dùng chung một loại (có sẵn thì dùng lại, chưa có thì tạo S1, S2…). Chưa có dầm thì chia theo ô lưới trục. Đặt tay: <kbd>DSAN</kbd> (hai góc ô, hoặc <code>Giaotruc</code> = mọi ô lưới).</li>
+  <li><b>Chi tiết từng loại</b><kbd>CTS</kbd>: mặt bằng thép, mặt cắt 1-1 / 2-2, bảng thép.</li>
+  <li><b>Thép theo mặt bằng</b><kbd>MBTS</kbd> (mục dưới) khi muốn thép chạy suốt nhiều ô.</li>
+</ol>
+
+<h3>Thép sàn liền mạch — MBTS</h3>
+<ol class="steps">
+  <li><b>Chọn vùng</b>Quét các ô sàn đã đặt (Enter = cả bản vẽ). Ô ở nhiều tầng <kbd>TANG</kbd> → mỗi tầng một mặt bằng.</li>
+  <li><b>Tên</b>Mặc định tên tầng; ô đã thuộc mặt bằng cũ → tên đó = cập nhật.</li>
+  <li><b>Thép lớp trên</b><code>Theosan</code> (theo từng loại sàn) / <code>Mu</code> (thép mũ tại gối) / <code>Hailop</code> (lưới 2 lớp chạy suốt) → điểm đặt.</li>
+</ol>
+<ul>
+  <li><b>Lớp dưới</b> chạy suốt các ô liền nhau cùng Ø / bước / chiều dày, qua dầm giữa, neo vào dầm biên; dài hơn cây thép thì chia đoạn nối chồng hai mẫu A / B, mối nối gần gối.</li>
+  <li><b>Thép mũ</b> vắt qua dầm giữa, vươn vào mỗi ô kM × nhịp thông thủy của ô đó, móc hai đầu; <b>phân bố dưới mũ</b> chạy suốt dọc tuyến dầm.</li>
+  <li>Dải ô kề nhau cùng cấu tạo gộp thành <b>một nhóm rải liền</b> (một nhãn cho cả mảng sàn); tách khi Ø / bước / dày khác hoặc gặp lỗ (ô không có sàn, lỗ thang).</li>
+  <li>Bản vẽ: mặt bằng thép lớp dưới, lớp trên (mép sàn, dầm nét khuất, trục), bảng thống kê. Thống kê <kbd>TKTH</kbd> / <kbd>KLTH</kbd>: ô sàn đã gộp chỉ còn bê tông, ván khuôn (thép tính theo mặt bằng).</li>
+  <li>Sửa ô sàn hoặc thép loại sàn → chạy lại <kbd>MBTS</kbd> (chi tiết đã vẽ tự vẽ lại). Sàn công xôn chưa gộp.</li>
+</ul>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>QLS</kbd></td><td>Quản lý sàn</td></tr>
+<tr><td><kbd>SANTD</kbd> · <kbd>DSAN</kbd></td><td>Đặt ô sàn tự động theo dầm · đặt tay</td></tr>
+<tr><td><kbd>MBTS</kbd></td><td>Thép sàn liền mạch theo mặt bằng</td></tr>
+<tr><td><kbd>CTS</kbd></td><td>Chi tiết sàn</td></tr>
+</tbody></table></div>
+
+<div class="note"><b>Sàn shop drawing theo tệp dữ liệu</b>
+<p>Sàn có thông số <code>nguon</code> = tệp dữ liệu (đường bao <code>BAO</code>, lỗ <code>LO</code>, vùng dày <code>VUNG</code>, mái dốc <code>DOC</code>, hạ cốt <code>HA</code>, nhóm thép <code>NHOM</code>…) vẽ được lưới thép chạy suốt theo đúng bản vẽ thiết kế, kể cả sàn hầm chịu đẩy ngược (<code>NGUOC 1</code>) và mép xiên (<code>CAT</code>). Chi tiết định dạng tệp: tài liệu <code>HUONG_DAN.md</code> trong bộ cài, mục 1g.</p></div>
+</section>
+
+<section class="sec" id="tang" data-t="Tầng và lưới trục">
+<h2><span class="n">15</span>Tầng và lưới trục</h2>
+<p class="lead">Khai báo tầng để mỗi mặt bằng biết cao độ của nó: mặt cắt, mặt đứng, khối lượng theo tầng, điện nước và xuất IFC đều dựa vào đây.</p>
+
+<h3>Lưới trục</h3>
+<ul>
+  <li>Kết cấu: <kbd>LUOI</kbd> — khoảng trục dạng <code>3600 4200</code> hoặc <code>3x3600</code>, tên trục bắt đầu, bóng trục trên / dưới / trái / phải, chuỗi kích thước + kích thước tổng; xem trước rồi bấm giao trục đầu. <kbd>-LUOI</kbd> cho script.</li>
+  <li>Kiến trúc: <kbd>LUOIKT</kbd>, <kbd>DTRUC</kbd>, <kbd>DIMT</kbd> (xem <a href="#tuong-cua">Trục, cột, tường</a>). Dùng chung được lưới trục có sẵn của bản vẽ.</li>
+</ul>
+
+<h3>Khai báo tầng — TANG</h3>
+<ol class="steps">
+  <li><b>Bảng tầng</b><kbd>TANG</kbd>: tên, cao độ sàn (cao tầng tự tính). Nút <span class="ui">Tạo mẫu</span> (Móng, Tầng 1…3, Mái).</li>
+  <li><b>Vùng mặt bằng</b><span class="ui">Chọn vùng mặt bằng…</span>: khung chữ nhật bao trọn mặt bằng của tầng (khung không in) + điểm gốc (giao trục 1-A) để đối chiếu giữa các tầng.</li>
+  <li><b>Kiến trúc hay kết cấu</b>Cột <span class="ui">Kiến trúc</span>: tầng là mặt bằng kiến trúc / điện nước — không ghi tên "MẶT BẰNG KẾT CẤU", <kbd>DTR</kbd> không lấy, <kbd>DTRKT</kbd> nhận. <kbd>DNTANG</kbd> (tab Điện Nước) mở cùng bảng, tầng mới mặc định Kiến trúc.</li>
+  <li><b>Chép tầng</b><span class="ui">Chép sang tầng đang chọn</span>: chép cả cấu kiện (dầm, sàn, cột…) hoặc chỉ lưới trục, kích thước; tầng đích chưa có vùng thì tự đặt vùng mới bên phải.</li>
+</ol>
+<ul>
+  <li>Cột nhiều tầng đặt ở tầng k tự hiện ở các tầng mà cột đi qua (chỉ thể hiện, không đếm trùng khối lượng).</li>
+  <li><kbd>KLM</kbd>, <kbd>KLD</kbd>, <kbd>KLTH</kbd> có thêm phạm vi <code>TheoTang</code>: mỗi tầng một phần trong Excel, cuối file phần TOÀN CÔNG TRÌNH.</li>
+  <li>Nhà vẽ bằng <kbd>MBTD</kbd> tự khai báo tầng. <kbd>CNTANG</kbd> vẽ lại khung, tên mặt bằng, cột đi qua.</li>
+</ul>
+</section>
+
+<section class="sec" id="ho-so-kc" data-t="Hồ sơ kết cấu: dàn trang, rà lỗi">
+<h2><span class="n">16</span>Hồ sơ kết cấu: dàn trang, rà lỗi</h2>
+<p class="lead">Dàn trang tự động mặt bằng + chi tiết + bảng thép lên khổ giấy có khung tên, rà lỗi cả hồ sơ, in bộ một file PDF. Nhóm <span class="ui">HỒ SƠ</span> trên tab Kết Cấu.</p>
+
+<h3>Dàn trang — DTR</h3>
+<ol class="steps">
+  <li><b>Thông tin</b><kbd>DTR</kbd>: khổ A4 đứng / A4 ngang / A3 / A2 / A1, tiền tố số hiệu (<code>KC-</code>), số bắt đầu, người vẽ, kiểm tra; nội dung: mặt bằng các tầng, chi tiết cấu kiện, bảng thống kê thép.</li>
+  <li><b>Layout hay Model</b><i>Layout</i>: mỗi trang một Layout, mỗi hình một khung nhìn giữ tỉ lệ. <i>Model</i>: các tờ ghép ngay trong Model (khung giấy + khung tên chèn theo tỉ lệ tờ, hình là bản sao — bản gốc giữ chỗ nên vẫn tự vẽ lại khi sửa cấu kiện, khối lượng không tính trùng).</li>
+  <li><b>Xếp kín tối đa</b>Bật (mặc định): ít tờ nhất, hình nhỏ lấp chỗ trống các tờ trước. Tắt: các hình của một cấu kiện (khai triển, mặt cắt, bảng thép) nằm chung một tờ — dễ đọc hơn. Mỗi loại cấu kiện bắt đầu tờ mới.</li>
+  <li><b>Kết quả</b>Khung (lề trái 20, còn lại 10), khung tên 180 × 50 (công trình, tên bản vẽ theo nội dung, người vẽ, kiểm tra, tỉ lệ, ngày, số hiệu), trang danh mục KC-00. Chạy lại <kbd>DTR</kbd> thay bộ lần trước.</li>
+  <li><b>In</b><kbd>INBO</kbd> → Layout / Model → một file PDF nhiều trang (xem <a href="#ho-so-kt">In bộ</a>).</li>
+</ol>
+<ul>
+  <li><b>Dầm dài hơn khổ giấy</b>: khai triển chia đoạn, giữ tỉ lệ 1:25 (xếp thường cắt tại trục; xếp kín cắt giữa nhịp khi bớt được tờ); tên dầm luôn ở đoạn đầu, ghi chú sau đoạn cuối. Dầm rất dài nên chọn A2 / A1.</li>
+  <li><b>Bảng thép cao hơn khổ</b> chia theo dòng cùng tỉ lệ, phần sau lặp hàng tiêu đề; bảng lấp chỗ trống dưới khai triển khi các mặt cắt xếp cột bên phải.</li>
+  <li>Bỏ ô "Bảng thống kê cốt thép" thì bỏ cả bảng thép trong chi tiết từng cấu kiện. Các ô nội dung được nhớ theo bản vẽ.</li>
+</ul>
+
+<h3>Shop drawing theo khung — DTRK, DTRKM</h3>
+<p>Khi các hình đã sắp sẵn trong Model (ghép nhiều bản vẽ): mỗi hình là một <b>khung trang</b> — đa tuyến chữ nhật kín trên lớp <code>VNM_TRANG</code> (không in) có dòng chữ <code>thứ tự|tỉ lệ|cờ|nhóm|tên hình|bản vẽ căn cứ</code> (cờ <code>P</code> = riêng một tờ, <code>N</code> = bắt đầu tờ mới). <kbd>DTRK</kbd> xếp lên Layout, <kbd>DTRKM</kbd> ghép ngay trong Model (bản vẽ bộ nhẹ). Khung tên shop là dải đứng 90 mm bên phải: đơn vị lập shop, chủ đầu tư, dự án, hạng mục, thiết kế, bản vẽ căn cứ, bảng phiên bản, ô ý kiến / dấu duyệt, người vẽ / kiểm tra / duyệt — thông tin đặt bằng <kbd>-TSC</kbd> (<code>sdNhaThau</code>, <code>sdCdt</code>, <code>sdDuAn</code>…). Ghép Model của bản vẽ khác: <kbd>-CHENMODEL</kbd>.</p>
+
+<h3>Rà lỗi — RALOI</h3>
+<p><kbd>RALOI</kbd> mở danh sách lỗi / cảnh báo / lưu ý, bấm đúp để phóng tới: tên cấu kiện trùng; block không thuộc cấu kiện nào; chi tiết cũ hơn thông số; cấu kiện đã đặt chưa vẽ chi tiết; dầm có gối không có cột / dầm đỡ; ô sàn có cạnh không có dầm; cổ móng nhỏ hơn cột, thép chờ cổ móng khác thép cột; móng chưa có cột; cấu kiện ngoài vùng tầng; mọi cảnh báo cấu tạo TCVN (lớp bảo vệ, neo, khe hở…). <span class="ui">Lưu danh sách</span> ra .txt. <kbd>-RALOI</kbd> in ra dòng lệnh.</p>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>TANG</kbd> · <kbd>-TANG</kbd> · <kbd>CNTANG</kbd></td><td>Quản lý tầng · dòng lệnh · vẽ lại khung tầng</td></tr>
+<tr><td><kbd>DTR</kbd></td><td>Dàn trang hồ sơ kết cấu (Layout / Model)</td></tr>
+<tr><td><kbd>DTRK</kbd> · <kbd>DTRKM</kbd></td><td>Dàn trang shop theo khung trang (Layout · Model)</td></tr>
+<tr><td><kbd>INBO</kbd></td><td>In bộ ra một PDF</td></tr>
+<tr><td><kbd>RALOI</kbd> · <kbd>-RALOI</kbd></td><td>Rà lỗi hồ sơ</td></tr>
+<tr><td><kbd>-TSC</kbd> · <kbd>-CHENMODEL</kbd></td><td>Thông số chung bằng dòng lệnh · chèn Model của bản vẽ khác</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="sec" id="kl-kc" data-t="Khối lượng, dự toán, cắt thép">
+<h2><span class="n">17</span>Khối lượng, dự toán, cắt thép</h2>
+<p class="lead">Khối lượng từng phần ra Excel có công thức, bảng tiên lượng theo mẫu dự toán Eta, bảng cắt thép tối ưu — cho một bản vẽ hoặc gộp nhiều bản vẽ.</p>
+
+<h3>Khối lượng từng phần</h3>
+<ul>
+  <li><kbd>KLM</kbd> móng · <kbd>KLD</kbd> dầm · <kbd>KLTH</kbd> phần thân. Excel 3 sheet: <b>Tổng hợp</b> (bê tông lót, bê tông, ván khuôn, thép theo nhóm Ø ≤ 10 / ≤ 18 / &gt; 18, tổng theo Ø), <b>KL chi tiết</b> (mỗi cấu kiện một nhóm, dòng diễn giải dài × rộng × cao), <b>Thống kê thép</b> (hình dạng thanh như bảng trong CAD). Ô là công thức: sửa số ở sheet chi tiết thì tổng hợp tự cập nhật.</li>
+  <li>Có khai báo tầng: phạm vi <code>TheoTang</code> — mỗi tầng một phần, cuối file TOÀN CÔNG TRÌNH.</li>
+</ul>
+
+<h3>Tiên lượng dự toán — KLDT</h3>
+<ol class="steps">
+  <li><b>Xuất</b><kbd>KLDT</kbd>: gộp móng, dầm, phần thân (và kiến trúc nếu chọn, như <kbd>KLKT</kbd>) vào một file theo mẫu bảng tiên lượng Dự toán Eta — dòng công việc (STT, mã hiệu, tên công tác, đơn vị, khối lượng) và các dòng diễn giải ngay dưới.</li>
+  <li><b>Nhập vào Eta</b>Tệp → Lấy Excel vào tiên lượng hiện tại: cột mã hiệu B, tên C, đơn vị D, khối lượng J, dòng bắt đầu 6.</li>
+  <li><b>Bảng mã</b><kbd>MADM</kbd> mở bảng mã định mức (Notepad): KHÓA ↹ MÃ HIỆU ↹ TÊN CÔNG TÁC ↹ ĐƠN VỊ ↹ HỆ SỐ. Mã mặc định chỉ là gợi ý (ĐM 1776 / TT 12/2021) — kiểm tra, sửa một lần theo định mức và biện pháp của đơn vị.</li>
+</ol>
+<p><b>Nhiều bản vẽ</b> (mỗi tầng / phần một bản vẽ): chạy <kbd>-XKL</kbd> trong từng bản vẽ (tệp dữ liệu → tên phần → cao độ → phần cấu kiện), rồi <kbd>KLDTN</kbd> gộp các tệp thành một file: Tiên lượng, Tổng hợp theo mã, Tổng hợp theo phần.</p>
+
+<h3>Bảng cắt thép — CATTHEP</h3>
+<p><kbd>CATTHEP</kbd>: phần (tất cả / móng / dầm / thân), phạm vi, chiều dài cây thép (11 700). Mỗi Ø xếp đoạn theo "vừa nhất giảm dần". Excel: <i>Tổng hợp</i> (chiều dài cần, số cây mua, hao hụt %, khối lượng cần / mua, đoạn thừa ≥ 1 m) và sheet mẫu cắt từng Ø. Nhiều bản vẽ: <kbd>-XTHEP</kbd> ở từng bản vẽ → <kbd>CATTHEPN</kbd> (thêm sheet Khối lượng theo bộ và Bảng cắt uốn có hình thanh).</p>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>KLM</kbd> · <kbd>KLD</kbd> · <kbd>KLTH</kbd></td><td>Khối lượng móng · dầm · phần thân ra Excel</td></tr>
+<tr><td><kbd>TKM</kbd> · <kbd>TKD</kbd> · <kbd>TKTH</kbd></td><td>Bảng thống kê thép vào bản vẽ</td></tr>
+<tr><td><kbd>KLDT</kbd> · <kbd>MADM</kbd></td><td>Tiên lượng dự toán (mẫu Eta) · bảng mã định mức</td></tr>
+<tr><td><kbd>-XKL</kbd> · <kbd>KLDTN</kbd></td><td>Ghi dữ liệu từng bản vẽ · gộp tiên lượng nhiều bản vẽ</td></tr>
+<tr><td><kbd>CATTHEP</kbd> · <kbd>-XTHEP</kbd> · <kbd>CATTHEPN</kbd></td><td>Cắt thép tối ưu · ghi thép từng bản vẽ · cắt thép nhiều bản vẽ</td></tr>
+</tbody></table></div>
+
+<div class="warn"><b>Khối lượng tham khảo</b><p>Kết quả là khối lượng tham khảo, cần kiểm tra lại theo hồ sơ thiết kế trước khi dùng.</p></div>
+</section>
+
+<section class="sec" id="ifc" data-t="Cốt thép 3D và xuất IFC">
+<h2><span class="n">18</span>Cốt thép 3D và xuất IFC</h2>
+<p class="lead">Xem từng thanh thép 3D của mọi cấu kiện ngay trong AutoCAD, và xuất mô hình BIM kết cấu IFC có cốt thép mở được bằng Revit, Tekla, Navisworks, Solibri, BIMcollab, SketchUp.</p>
+
+<h3>Cốt thép 3D trong AutoCAD — XEM3D</h3>
+<ol class="steps">
+  <li><b>Mở bảng</b><kbd>XEM3D</kbd> (Kết Cấu › Hồ sơ › "Cốt thép 3D"): mọi cấu kiện đã đặt trên mặt bằng, không cần xuất tệp. Danh mục theo tầng / loại; khối bê tông + từng thanh thép màu theo số hiệu; bảng thép.</li>
+  <li><b>Xem</b>Bê tông đặc / mờ / ẩn; <span class="ui">Tách thép</span> kéo các số hiệu ra hai bên; <span class="ui">Xem đoạn</span> 6 m cho cấu kiện dài; góc 3D / trên / trước / bên; chạm thanh hoặc dòng bảng để làm nổi số hiệu đó.</li>
+  <li><b>Gối</b>Dầm / giằng / sàn / ô văng hiện mờ cột, vách, đài móng, dầm đỡ quanh nó, có nhãn — bấm nhãn để chuyển sang cấu kiện đó.</li>
+  <li><b>Hai chiều với bản vẽ</b>Chọn block cấu kiện (hoặc nét của chi tiết 2D) → bảng chuyển theo; <span class="ui">Trên bản vẽ</span> phóng tới block; <span class="ui">Chi tiết 2D</span> phóng tới khai triển / mặt cắt / bảng thép; <span class="ui">Cập nhật</span> dựng lại sau khi sửa thông số.</li>
+</ol>
+<p>Cảnh báo "⚠ Thép ngoài BT": nhóm thép có phần nằm ngoài mọi khối bê tông (chân móc dài hơn cấu kiện đỡ, cấu kiện neo vào chưa có trong bản vẽ…). Bảng chạy bằng card màn hình, không cần mạng.</p>
+
+<h3>Xuất IFC — IFCKC</h3>
+<ol class="steps">
+  <li><b>Chuẩn bị</b>Khai báo tầng <kbd>TANG</kbd> (mỗi tầng dời về gốc trục 1-A của nó — các mặt bằng đặt cạnh nhau trên bản vẽ ra một khối nhà chồng đúng tầng). Cấu kiện phải được <b>đặt trên mặt bằng</b>: <kbd>DD</kbd>, <kbd>DCOT</kbd>, <kbd>DSAN</kbd> / <kbd>MBTS</kbd>, <kbd>DM</kbd>, giằng / móng băng, <kbd>DOVA</kbd>, lanh tô, <kbd>DTB</kbd>.</li>
+  <li><b>Xuất</b><kbd>IFCKC</kbd> → tên tệp. Cuối lệnh báo số cấu kiện, số thanh, kg theo bảng / đã dựng, cấu kiện chưa đặt, phần chưa dựng thép 3D.</li>
+  <li><b>Mở</b>Revit / Tekla / Navisworks / Solibri / SketchUp. Mỗi cấu kiện có thép là một nhóm (khối bê tông + các thanh của nó) — chọn nhóm là chọn cả cấu kiện lẫn thép.</li>
+</ol>
+<ul>
+  <li>Thép dựng từ chính kết quả tính của Dtool: thép dầm theo khai triển (đoạn bẻ, đoạn chia, hai mẫu nối), đai đúng vùng dày / thưa; cột từng tầng nối so le, uốn xiên, bẻ neo đỉnh; sàn lưới, thép mũ; móng băng, đài cọc (cả vát góc); ô văng, lanh tô, thang theo mẫu <kbd>KCTB</kbd>, vách tầng hầm.</li>
+  <li><b>Tổng khối lượng thép IFC = bảng thống kê</b> của Dtool. Mỗi nhóm thanh mang số hiệu, Ø, mác thép, hình dạng, kích thước, chiều dài, số mối nối (bộ thuộc tính <code>Dtool_CotThep</code>). Kèm tệp <code>&lt;tên&gt;.ifc.json</code> để đối chiếu.</li>
+  <li>Thép ở nút đặt như thi công: thép sàn lớp trên trên thép dầm; thép dầm nằm trong thép đứng của cột / vách; hai dầm giao thì dầm phụ nằm trên lớp trên dầm chính; đầu cột tầng trên cùng bẻ theo hướng dầm khung.</li>
+  <li>Chưa dựng thép 3D: thang tròn, dầm chiếu nghỉ chữ L, sàn công xôn, thang kiểu cũ (xuất bê tông hoặc báo chưa xuất).</li>
+</ul>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>XEM3D</kbd></td><td>Bảng cốt thép 3D trong AutoCAD</td></tr>
+<tr><td><kbd>IFCKC</kbd> · <kbd>-IFCKC</kbd></td><td>Xuất IFC kết cấu có cốt thép (hộp thoại · dòng lệnh)</td></tr>
+</tbody></table></div>
+</section>
+
+<section class="sec part" id="dien-nuoc" data-t="Điện nước">
+<h2><span class="n">19</span>Điện nước</h2>
+<p class="lead">Vẽ nhanh bản vẽ điện chiếu sáng, ổ cắm, điều hòa, cấp nước, thoát nước ngay trên mặt bằng kiến trúc của Dtool — <b>bán tự động</b>: máy bố trí theo loại phòng và đồ nội thất đã đặt, anh sửa tay rồi cho máy đi dây / đi ống lại. Tab <span class="ui">Điện Nước</span>.</p>
+
+<ol class="steps">
+  <li><b>Khai báo tầng</b>Nhà vẽ bằng <kbd>MBTD</kbd> đã có. Mặt bằng vẽ tay: nút <span class="ui">Khai báo tầng</span> (<kbd>DNTANG</kbd>) — tên + cao độ từng tầng, <span class="ui">Chọn vùng mặt bằng…</span> bao trọn mặt bằng kiến trúc + điểm gốc trục 1-A. Phòng phải có nhãn (<kbd>PHONG</kbd> / MBTD).</li>
+  <li><b>Bố trí điện</b><kbd>DNBT</kbd> (tầng: <code>TatCa</code> / <code>Chon</code>): mỗi hệ một mặt bằng nền riêng dưới bản vẽ — <b>chiếu sáng</b> (đèn, công tắc, dây), <b>ổ cắm + thiết bị</b> (ổ cắm, bình nóng lạnh, bếp từ, hút mùi), <b>điều hòa</b> (dàn lạnh, ổ riêng, dàn nóng, ống đồng, ống nước ngưng). Mặt bằng nền in mờ, chỉ thiết bị, dây, ống in đậm.</li>
+  <li><b>Sửa tay</b>Dời / xóa thiết bị máy đặt, thêm bằng <kbd>DNKH</kbd> (thiết bị gắn tường tự bám tường), rồi <kbd>DNDD</kbd> chia lộ + đi dây lại. Chạy lại <kbd>DNBT</kbd> → <code>Lamlai</code>: đặt lại thiết bị máy, giữ thiết bị thêm tay.</li>
+  <li><b>Cấp nước, thoát nước</b><kbd>DNCN</kbd>: trục cấp từ bồn mái, ống PPR lạnh / nóng theo tường WC, van, điểm chờ; đường kính theo đương lượng (TCVN 4513). <kbd>DNTN</kbd>: trục thoát xí Ø110, thoát rửa, thông hơi, thoát mưa; ống nhánh uPVC có độ dốc, phễu thu sàn. Dời ký hiệu trục rồi chạy lại → ống đi theo trục mới.</li>
+  <li><b>Hồ sơ</b><kbd>DNSD</kbd> sơ đồ nguyên lý tủ điện + bảng tính phụ tải (TCVN 9207); <kbd>DNSN</kbd> sơ đồ cấp + thoát nước; <kbd>DNTK</kbd> thống kê vật tư; <kbd>DNCT</kbd> chú thích ký hiệu; <kbd>DNTM</kbd> thuyết minh tính toán (điện; cấp thoát nước); <kbd>DTRDN</kbd> dàn trang hồ sơ điện nước → <kbd>INBO</kbd>.</li>
+</ol>
+
+<figure><img src="../assets/shots/dn-dien.webp" width="1400" height="1045" loading="lazy" alt="Ba mặt bằng tầng 2 do Dtool vẽ: chiếu sáng với đèn, công tắc, dây; ổ cắm và thiết bị điện; điều hòa với dàn lạnh, dàn nóng ngoài ban công">
+<figcaption>Ba mặt bằng điện của một tầng: chiếu sáng · ổ cắm và thiết bị · điều hòa.</figcaption></figure>
+
+<ul>
+  <li>Đèn theo loại phòng: khách / sinh hoạt / bếp đèn âm trần lưới ~1,5 m (Ø90 / Ø110 chọn trên bảng) + đèn chùm, đèn thả trên bàn ăn; phòng ngủ ốp trần + âm trần; WC ốp trần chống ẩm, đèn gương, quạt hút; ban công đèn tường. Công tắc cạnh cửa phía tay nắm.</li>
+  <li>Dàn nóng đặt ban công / sân cùng tầng gần nhất, không có thì giá treo mặt tiền / mặt sau. Tủ bếp chữ I / L của thư viện: chậu rửa + bếp lấy theo hình block.</li>
+  <li><b>Nguồn 1 pha / 3 pha</b> (ô "Nguồn điện": tự động — Ptt &gt; 11 kW thì 3 pha): các lộ chia vào L1 / L2 / L3 cho cân tải; sơ đồ, bảng tải, thuyết minh ghi pha từng lộ, độ lệch tải.</li>
+  <li>Bảng làm việc <kbd>BLVDN</kbd>: bật / tắt tự thêm điều hòa, bình nóng lạnh, quạt trần, nước nóng; khoảng cách đèn; số điểm / lộ; dung tích bồn mái; tỉ lệ bản vẽ.</li>
+  <li>Sơ đồ / bảng dài tự chia vừa khổ A3. Kiến trúc đổi: <kbd>DNNEN</kbd> cập nhật mặt bằng nền.</li>
+</ul>
+
+<figure><img src="../assets/shots/dn-nuoc.webp" width="1101" height="1290" loading="lazy" alt="Mặt bằng cấp nước và thoát nước tầng 2: ống PPR trong WC, trục thoát xí Ø110, thoát rửa, thông hơi, thoát mưa Ø90" style="max-width:460px">
+<figcaption>Cấp nước và thoát nước: trục chồng tầng ở góc WC, ống theo tường.</figcaption></figure>
+
+<div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>DNTANG</kbd></td><td>Khai báo tầng kiến trúc — bước 1 khi mặt bằng vẽ tay</td></tr>
+<tr><td><kbd>DNBT</kbd> · <kbd>DNDD</kbd> · <kbd>DNKH</kbd></td><td>Bố trí điện tự động · chia lộ + đi dây lại · chèn ký hiệu tay</td></tr>
+<tr><td><kbd>DNCN</kbd> · <kbd>DNTN</kbd></td><td>Cấp nước · thoát nước</td></tr>
+<tr><td><kbd>DNSD</kbd> · <kbd>DNSN</kbd></td><td>Sơ đồ nguyên lý điện + tính tải · sơ đồ cấp thoát nước</td></tr>
+<tr><td><kbd>DNTK</kbd> · <kbd>DNCT</kbd> · <kbd>DNTM</kbd></td><td>Thống kê vật tư · chú thích ký hiệu · thuyết minh tính toán</td></tr>
+<tr><td><kbd>DTRDN</kbd> · <kbd>DNNEN</kbd> · <kbd>BLVDN</kbd></td><td>Dàn trang · cập nhật mặt bằng nền · bảng làm việc</td></tr>
+</tbody></table></div>
+
+<div class="note"><b>In mờ nền</b><p>Trang <kbd>DTRDN</kbd> và tờ Model in bằng <kbd>INBO</kbd> tự bật "in độ trong suốt". In tay bằng PLOT thì tích <span class="ui">Plot transparency</span>, không thì nền in đậm như dây.</p></div>
+</section>
+
+<section class="sec part" id="tro-ly-ai" data-t="Trợ lý AI">
+<h2><span class="n">20</span>Trợ lý AI</h2>
+<p class="lead">Khung chat tiếng Việt ngay trong AutoCAD: Claude đọc bản vẽ đang mở, trả lời, soát lỗi, và vẽ bằng chính các lệnh Dtool — tường, cửa thư viện, nhãn phòng, nội thất, DIM, mặt cắt, cả ngôi nhà. Gõ <kbd>TROLYAI</kbd> (Kiến Trúc › Chung › Trợ lý AI).</p>
+
+<h3>Cần gì để dùng</h3>
+<ul>
+  <li><b>Gói Claude</b> (mặc định khi chưa có khóa API): cài Claude Code, mở Terminal / PowerShell gõ <code>claude</code> và đăng nhập gói Claude một lần (hoặc khi khung chat báo hết phiên).</li>
+  <li>hoặc <b>Khóa API</b>: nút ⚙ → dán khóa từ console.anthropic.com (lưu mã hóa theo tài khoản Windows), tính tiền theo lượt dùng.</li>
+  <li>Model: Opus 5.5 (mặc định, mạnh nhất) / Sonnet 5.5 (nhanh hơn) / Haiku 5.5 (nhanh, rẻ); mức suy nghĩ thấp / vừa / cao.</li>
+</ul>
+
+<h3>Hỏi và làm</h3>
+<ul>
+  <li>Ví dụ: "bản vẽ này có những lớp nào?", "đếm số cửa đi theo loại", "vẽ phòng 4×5 m tường 220, cửa đi 900 ở tường dưới mở vào trong, cửa sổ 1,4 m tường trên, ghi tên PHÒNG NGỦ rồi bố trí nội thất", "chèn giường rộng nệm 1600".</li>
+  <li>Mỗi lần Claude gọi công cụ hiện một dòng (Đang chạy / Xong / Lỗi) — bấm để xem mã và kết quả.</li>
+  <li><b>Vẽ nháp — Giữ / Bỏ</b>: sau mỗi lượt Claude sửa bản vẽ, thanh "Claude vừa sửa bản vẽ: thêm … · sửa … · xóa …" hiện ra, phần mới được tô sáng. <span class="ui">Giữ</span> giữ lại; <span class="ui">Bỏ</span> lùi toàn bộ lượt đó; <span class="ui">Xem</span> chọn + phóng tới. Gõ tin mới = tự Giữ.</li>
+  <li><b>Gửi tệp để đọc rồi vẽ lại</b>: nút <span class="ui">Tệp</span>, kéo thả, hoặc dán ảnh (Ctrl+V) — ảnh, PDF, Excel, CSV / TXT, Word, DXF. Ảnh không ghi tỉ lệ: Claude hỏi một kích thước chuẩn trước khi vẽ.</li>
+  <li><b>Khoanh vùng</b>: nút <span class="ui">Vùng</span> (<kbd>AIVUNG</kbd>) khoanh hai góc → ảnh + danh sách đối tượng trong vùng tự đính kèm; hỏi "sửa chỗ này", "vùng này có lỗi gì?".</li>
+</ul>
+
+<h3>Dựng cả ngôi nhà</h3>
+<ol class="steps">
+  <li><b>Nói công năng</b>"Bố trí nhà lô 5×18, 4 tầng" — hoặc gửi ảnh phác thảo / mặt bằng cũ. Trợ lý <b>hỏi lại công năng từng tầng</b> (để xe, thang máy, số phòng ngủ, WC, thờ, giặt phơi…) trước khi xếp.</li>
+  <li><b>Chọn phương án</b>Máy Dtool đưa 1–3 phương án theo quy tắc nhà thật (kèm ảnh); trợ lý sửa theo ý anh. Bố trí còn lỗi nặng (bếp ra mặt tiền, WC quá to, phòng ngủ không cửa sổ…) thì không vẽ cho tới khi sửa xong.</li>
+  <li><b>Vẽ</b>Dtool vẽ như <kbd>MBTDVE</kbd>: mặt bằng mọi tầng, mặt cắt, mặt đứng, mái; bố trí lưu thành file <code>.mbtd</code> liên kết với bản vẽ.</li>
+</ol>
+
+<h3>Nút làm ngay</h3>
+<ul>
+  <li><b>Câu hỏi nhanh</b> (hàng nút dưới khung chat): Soát bản vẽ, Thống kê, Quy chuẩn, Dự toán, Bố trí nhà mới, Quy ước đã nhớ… Sửa danh sách ở ⚙ (mỗi dòng <code>Tên | câu hỏi</code>).</li>
+  <li><b>Soát bản vẽ</b>: DIM ghi số tay khác số đo, cửa chưa gắn tường, nhãn phòng mất biên, tường chưa có thông tin khối lượng, phòng quá nhỏ, chữ đè nhau, vẽ chồng, rác, màu không ByLayer, đối tượng lớp 0, xref mất tệp, công năng chưa thực tế, cầu thang chưa thuận. Bấm từng mục để phóng tới; <span class="ui">Sửa</span> các nhóm sửa tự động được (một bước Undo).</li>
+  <li><b>Quy chuẩn</b> (QCVN 01:2021/BXD, nhà ở riêng lẻ): mật độ xây dựng theo diện tích lô, hệ số sử dụng đất, khoảng lùi, ban công vươn ra theo lộ giới. <b>Dự toán sơ bộ</b>: diện tích quy đổi (móng, tầng, sân thượng 50 %, mái…) × đơn giá. Cả hai là tham khảo — địa phương có quy định riêng.</li>
+  <li><b>Nhớ quy ước</b>: "từ nay luôn dùng tường bao 200", "cửa WC rộng 700 cho dự án này" → áp dụng cho mọi lần sau (chung hoặc theo thư mục công trình).</li>
+  <li><b>Nút của anh</b>: "lưu việc vừa rồi thành nút" → nút xanh <b>▶ tên</b> chạy lại không cần Claude; chuột phải để xóa.</li>
+</ul>
+
+<div class="note"><b>Mỗi bản vẽ một cuộc chat</b>
+<ul>
+  <li>Khung chat nhớ cuộc chat theo bản vẽ: mở lại bản vẽ (kể cả hôm sau) là nói tiếp. <span class="ui">Mới</span> = bắt đầu lại.</li>
+  <li>Mỗi lần Claude sửa bản vẽ là một bước Undo (<kbd>U</kbd>). Lưu / đóng / xóa tệp / purge → Claude hỏi anh trước. Claude chỉ làm việc trên bản vẽ đang mở, qua cổng nội bộ của máy này.</li>
+  <li>Dùng từ <b>Claude Desktop</b>: gõ <kbd>AINOI</kbd> → <code>Bat</code>; Settings › Extensions → kéo thả tệp <code>…\Dtool.bundle\Contents\Ai\dtool.mcpb</code> → Install.</li>
+</ul></div>
+</section>
+
+<section class="sec part" id="tinh-toan" data-t="Cách tính: neo, nối, lớp bảo vệ">
+<h2><span class="n">21</span>Cách tính: neo, nối, lớp bảo vệ</h2>
+<p class="lead">Thép, neo, nối chồng và lớp bảo vệ tính theo TCVN 5574:2018. Thông số chung: móng <kbd>QLM</kbd>, dầm <kbd>QLD</kbd>, thân <kbd>QLTH</kbd> → Thông số chung.</p>
+
+<h3>Thép</h3>
+<ul>
+  <li>Khối lượng = 0,00617 × d² kg/m; số thanh = (cạnh − 2a) / khoảng cách + 1.</li>
+  <li>Thanh dài hơn cây thép (mặc định 11 700) được cộng mối nối chồng.</li>
+  <li>Đế móng vát: thể tích theo công thức lăng trụ cụt. Móng băng tự trừ phần giao nhau (bê tông, lót, ván khuôn; cốt thép không trừ).</li>
+</ul>
+
+<h3>Neo và nối (ô "Neo / nối thép (× d)" = 0, mặc định)</h3>
+<p>Tự tính theo mục 10.3.5, 10.3.6 từ mác bê tông và loại thép (CB240-T, CB300-V, CB400-V, CB500-V):</p>
+<ul>
+  <li>L<sub>0,an</sub> = R<sub>s</sub>·d / (4·η₁·η₂·R<sub>bt</sub>) — η₁ = 2,5 thép gân, 1,5 thép trơn; η₂ = 1,0 khi Ø ≤ 32, 0,9 khi Ø 36–40.</li>
+  <li>Neo chịu kéo = L<sub>0,an</sub>; chịu nén = 0,75·L<sub>0,an</sub> (≥ 15d, 200 mm); neo có bẻ (móc, chữ L) giảm 30 %.</li>
+  <li>Nối chồng chịu kéo so le ≤ 50 % số thanh = 1,2·L<sub>0,an</sub>; nối 100 % tại một tiết diện = 2,0·L<sub>0,an</sub>; chịu nén = 0,9·L<sub>0,an</sub> (≥ 20d, 250 mm). Làm tròn lên 10 mm.</li>
+</ul>
+<div class="tw"><table><thead><tr><th>Bê tông + CB400-V</th><th>Neo kéo</th><th>Neo nén</th><th>Nối kéo so le</th><th>Nối 100 %</th><th>Nối nén</th></tr></thead><tbody>
+<tr><td>B20</td><td>39d</td><td>30d</td><td>47d</td><td>78d</td><td>35d</td></tr>
+<tr><td>B25</td><td>33d</td><td>25d</td><td>40d</td><td>67d</td><td>30d</td></tr>
+</tbody></table></div>
+<p>Nhập số &gt; 0 thì dùng số đó × d cho cả neo và nối. Nối thép cột, vách: <i>So le 2 đợt</i> (mặc định, nửa số thanh nối cao hơn 1,3·L<sub>nối</sub>), <i>100 % một tiết diện</i>, <i>Chỉ chịu nén</i>.</p>
+
+<h3>Lớp bảo vệ (Bảng 19)</h3>
+<ul>
+  <li>Môi trường: trong nhà 20, ẩm &gt; 75 % 25, ngoài trời 30 mm; kết cấu trong đất / móng có lót 40 mm; cọc đúc sẵn 35 mm.</li>
+  <li>Mặc định: cổ, sườn móng, giằng, cọc 40; sàn, thang 20; ô văng 30. Hộp quản lý cảnh báo khi lớp bảo vệ hoặc neo nhập tay nhỏ hơn yêu cầu.</li>
+  <li>Ghi chú bảng thép ghi đủ neo kéo / nén, nối so le / 100 % / nén theo mác bê tông, loại thép và cách nối cột, vách.</li>
+</ul>
+
+<div class="warn"><b>Kết quả tham khảo</b><p>Khối lượng và bố trí thép là tham khảo theo khai báo; kiểm tra lại theo hồ sơ thiết kế trước khi thi công.</p></div>
+</section>
+
+<section class="sec" id="su-co" data-t="Khi gặp sự cố">
+<h2><span class="n">22</span>Khi gặp sự cố</h2>
+
+<div class="tw"><table><thead><tr><th>Hiện tượng</th><th>Cách xử lý</th></tr></thead><tbody>
+<tr><td>Không thấy tab Kết Cấu / Kiến Trúc / Điện Nước</td><td>Gõ <kbd>RIB</kbd>. Vẫn không có: kiểm tra dòng lệnh lúc mở AutoCAD có báo "Dtool … đã nạp" không; chưa có thì đóng AutoCAD, chạy lại <code>CaiDat.bat</code>.</td></tr>
+<tr><td>Gõ lệnh Kiến trúc (TUONG, CUA, MBTD…) báo <code>Unknown command</code></td><td>Phần Kiến trúc chưa nạp — dòng lệnh (và từ bản 2.3.88 một hộp báo) nói lý do. Thường gặp nhất: AutoCAD đặt <code>LISPSYS</code> = 0 (AutoLISP kiểu cũ) → gõ <code>LISPSYS</code>, nhập <code>1</code>, Enter, đóng rồi mở lại AutoCAD. Đang dùng bản cũ hơn 2.3.87 trên máy để <code>SECURELOAD</code> mặc định → cài bản mới nhất.</td></tr>
+<tr><td>Mất menu Dtool trên thanh menu</td><td>Gõ <kbd>MENUDT</kbd>.</td></tr>
+<tr><td>Mất bảng làm việc</td><td>Gõ <kbd>BLV</kbd> rồi chọn nhóm, hoặc bấm nút ↘ góc nhóm Ribbon.</td></tr>
+<tr><td>Lệnh báo "cần bản quyền"</td><td>Hết hạn dùng thử — xem <a href="#ban-quyen">Bản quyền</a>, gõ <kbd>BQ</kbd>.</td></tr>
+<tr><td>Bộ cài dừng ngay</td><td>AutoCAD còn mở (kể cả cửa sổ thu nhỏ) — đóng hết rồi chạy lại.</td></tr>
+<tr><td>Bấm ESC thấy "Đã hủy lệnh"</td><td>Bình thường, không phải lỗi.</td></tr>
+<tr><td>Cửa không cắt tường / khối lượng tường sai</td><td><kbd>GCUA</kbd> gắn cửa vào tường; <kbd>SKL</kbd> soát dữ liệu thiếu trước khi <kbd>KLKT</kbd>.</td></tr>
+<tr><td>Block thư viện trong bản vẽ cũ còn hình cũ, viền lộ khi in</td><td><kbd>CNTV</kbd> (cập nhật block thư viện) rồi <kbd>CNMC</kbd> → <code>Tatca</code>.</td></tr>
+<tr><td>Mặt cắt / chi tiết không theo mặt bằng mới</td><td><kbd>CNMC</kbd> → <code>Tatca</code>; kiểm tra <kbd>TDMC</kbd> đang bật.</td></tr>
+<tr><td>In ra mảng xám / đen sau đồ nội thất</td><td>In bằng <code>monochrome.ctb</code>; lớp <code>DTOOL-TOMAU</code> (màu vật liệu) để không in.</td></tr>
+<tr><td>Nền điện nước in đậm như dây</td><td>In bằng <kbd>INBO</kbd>, hoặc PLOT có tích <span class="ui">Plot transparency</span>.</td></tr>
+<tr><td>Trợ lý AI báo hết phiên / không trả lời</td><td>Mở Terminal gõ <code>claude</code> đăng nhập lại, hoặc nhập khóa API ở ⚙. Nhật ký: <code>%APPDATA%\VeNhanhMong\ai\dtool-ai.log</code>.</td></tr>
+</tbody></table></div>
+
+<h3>AutoCAD văng hoặc treo</h3>
+<ol class="steps">
+  <li><b>Xem phiên bản</b>Dòng lệnh lúc mở AutoCAD ghi số phiên bản đang chạy — nên cài bản mới nhất ở <a href="/#bat-dau">dtool.vn</a>.</li>
+  <li><b>Gom nhật ký</b>Nhấp đúp <code>BaoLoi.bat</code> (trong thư mục bộ cài, hoặc <code>%APPDATA%\Autodesk\ApplicationPlugins\Dtool.bundle\Contents\BaoLoi.bat</code>) → file <code>Dtool_BaoLoi_&lt;tên máy&gt;_&lt;ngày giờ&gt;.txt</code> trên Desktop (phiên bản Windows / AutoCAD / Dtool, add-in khác, các lần văng 14 ngày qua).</li>
+  <li><b>Khoanh vùng</b>Gõ <kbd>TDMC</kbd> → <code>Tat</code> (tắt phần tự vẽ lại mặt cắt / chi tiết) rồi thử lại; tắt rồi vẫn văng thì ghi điều đó khi gửi.</li>
+  <li><b>Gửi</b>Gửi file BaoLoi + mô tả thao tác lúc văng qua Zalo <b>0937 142 789</b>.</li>
+</ol>
+<p>Nhật ký thường của Dtool: <code>%TEMP%\VeNhanhMong.log</code>.</p>
+</section>
+
+<section class="sec part" id="lenh" data-t="Bảng tra lệnh">
+<h2><span class="n">23</span>Bảng tra lệnh</h2>
+<p class="lead">Mọi lệnh Dtool theo tab và nhóm Ribbon. Gõ tên lệnh ở dòng lệnh AutoCAD; trong AutoCAD gõ <kbd>LENH</kbd> để xem danh sách này.</p>
+<div class="find noprint"><input id="cmdq" type="search" placeholder="Tìm lệnh hoặc việc cần làm, vd. cửa sổ, thép sàn, khối lượng…" aria-label="Tìm lệnh"><span id="cmdn">222 lệnh</span></div>
+<p class="empty" id="cmdnone">Không có lệnh nào khớp.</p>
+<div class="cmdgrp"><h3>Tab Kiến Trúc</h3>
+<h4>Chung</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>CHUAN</kbd></td><td>Chuẩn hóa</td></tr>
+<tr><td><kbd>BLV</kbd></td><td>Bảng làm việc của một nhóm Ribbon (thông số + nút lệnh, cạnh màn hình)</td></tr>
+<tr><td><kbd>TROLYAI</kbd></td><td>Trợ lý AI: khung chat điều khiển AutoCAD / SketchUp bằng tiếng Việt</td></tr>
+<tr><td><kbd>AINOI</kbd></td><td>Bật / tắt cầu nối AI cho Claude Desktop (MCP)</td></tr>
+<tr><td><kbd>AIVUNG</kbd></td><td>Khoanh một vùng bản vẽ để hỏi Trợ lý AI (nút Vùng của khung chat)</td></tr>
+<tr><td><kbd>LENH</kbd></td><td>Danh sách lệnh</td></tr>
+<tr><td><kbd>BQ</kbd></td><td>Bản quyền</td></tr>
+<tr><td><kbd>CNNET</kbd></td><td>Cập nhật nét</td></tr>
+<tr><td><kbd>GLAY</kbd></td><td>Gán layer</td></tr>
+<tr><td><kbd>BYL</kbd></td><td>Đưa về ByLayer</td></tr>
+</tbody></table></div>
+<h4>Thiết kế</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>MBTD</kbd></td><td>Mặt bằng tự động (bảng Thiết kế: lô, số tầng, công năng từng tầng, xem trước phương án)</td></tr>
+<tr><td><kbd>MBTDLO</kbd></td><td>Chọn khung lô đất + cạnh mặt tiền cho mặt bằng tự động</td></tr>
+<tr><td><kbd>MBTDVE</kbd></td><td>Vẽ phương án mặt bằng tự động (tường, cửa, thang, nhãn phòng, nội thất)</td></tr>
+<tr><td><kbd>MBTDMC</kbd></td><td>Mặt cắt thủ công trên bản vẽ MBTD: bấm đường cắt, phía nhìn, điểm đặt</td></tr>
+<tr><td><kbd>MBTDNAP</kbd></td><td>Nạp lại từ file .mbtd: vẽ lại mặt bằng theo file bố trí đã liên kết (Dtool 3D / app đã sửa)</td></tr>
+</tbody></table></div>
+<h4>Trục - cột</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>LUOIKT</kbd></td><td>Lưới trục</td></tr>
+<tr><td><kbd>TRUC</kbd></td><td>Trục đơn</td></tr>
+<tr><td><kbd>DTRUC</kbd></td><td>Đầu trục</td></tr>
+<tr><td><kbd>DIMT</kbd></td><td>DIM trục</td></tr>
+<tr><td><kbd>COT</kbd></td><td>Vẽ cột</td></tr>
+<tr><td><kbd>COTT</kbd></td><td>Cột tại giao trục (thông số cột trên bảng)</td></tr>
+</tbody></table></div>
+<h4>Tường</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>TUONG</kbd></td><td>Vẽ tường</td></tr>
+<tr><td><kbd>TUONGT</kbd></td><td>Dựng tường theo trục (thông số tường trên bảng BLV)</td></tr>
+<tr><td><kbd>NTUONG</kbd></td><td>Nối tường</td></tr>
+<tr><td><kbd>TTCOT</kbd></td><td>Tường trừ cột</td></tr>
+<tr><td><kbd>HTG</kbd></td><td>Hatch tường</td></tr>
+<tr><td><kbd>CNHT</kbd></td><td>Cập nhật hatch</td></tr>
+<tr><td><kbd>SCHEP</kbd></td><td>Sửa mặt bằng chép</td></tr>
+<tr><td><kbd>KEOTUONG</kbd></td><td>Co kéo tường (như STRETCH)</td></tr>
+<tr><td><kbd>XTUONG</kbd></td><td>Xóa tường</td></tr>
+</tbody></table></div>
+<h4>Cửa</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>CUA</kbd></td><td>Mở bảng Cửa (chọn mẫu block động, đặt vào tường)</td></tr>
+<tr><td><kbd>CDI</kbd></td><td>Mở bảng Cửa - cửa đi (block động)</td></tr>
+<tr><td><kbd>CSO</kbd></td><td>Mở bảng Cửa - cửa sổ (block động)</td></tr>
+<tr><td><kbd>DATCUA</kbd></td><td>Đặt cửa theo mẫu đang chọn trên bảng Cửa</td></tr>
+<tr><td><kbd>DCUA</kbd></td><td>Dời / chép cửa</td></tr>
+<tr><td><kbd>GCUA</kbd></td><td>Gắn cửa vào tường</td></tr>
+<tr><td><kbd>CNCUA</kbd></td><td>Cập nhật ô cửa</td></tr>
+<tr><td><kbd>NCUA</kbd></td><td>Nhãn cửa: ẩn / hiện</td></tr>
+<tr><td><kbd>MCUA</kbd></td><td>Mã cửa</td></tr>
+</tbody></table></div>
+<h4>Phòng - sàn - trần</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>PHONG</kbd></td><td>Nhãn phòng</td></tr>
+<tr><td><kbd>CNPH</kbd></td><td>Cập nhật phòng</td></tr>
+<tr><td><kbd>LSAN</kbd></td><td>Lát sàn</td></tr>
+<tr><td><kbd>TRAN</kbd></td><td>Mặt bằng trần</td></tr>
+<tr><td><kbd>DEN</kbd></td><td>Rải đèn</td></tr>
+<tr><td><kbd>OPLEN</kbd></td><td>Len / ốp tường</td></tr>
+</tbody></table></div>
+<h4>Mái - mặt đứng</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>MAI</kbd></td><td>Mái dốc: mái Nhật / mái Thái / Mansard, 4 mái hông hoặc 2 mái đầu hồi → mặt bằng mái (chọn mái đã vẽ để sửa)</td></tr>
+<tr><td><kbd>MDMB</kbd></td><td>Mặt đứng / mặt tiền theo mặt bằng: đường nhìn ngoài nhà, hướng nhìn, tên, phong cách hiện đại / tân cổ điển, điểm đặt</td></tr>
+</tbody></table></div>
+<h4>Nội thất</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>BTPN</kbd></td><td>Bố trí phòng ngủ</td></tr>
+<tr><td><kbd>BTWC</kbd></td><td>Bố trí vệ sinh</td></tr>
+<tr><td><kbd>BTBEP</kbd></td><td>Bố trí bếp</td></tr>
+<tr><td><kbd>BTKHACH</kbd></td><td>Bố trí phòng khách</td></tr>
+<tr><td><kbd>BTAN</kbd></td><td>Bố trí phòng ăn</td></tr>
+<tr><td><kbd>CUATV</kbd></td><td>Thư viện block động (mọi nhóm)</td></tr>
+<tr><td><kbd>DONG</kbd></td><td>Chép block động</td></tr>
+<tr><td><kbd>CNTV</kbd></td><td>Cập nhật block thư viện trong bản vẽ (nạp đè bản mới, giữ thông số)</td></tr>
+<tr><td><kbd>DMNT</kbd></td><td>Danh mục nội thất</td></tr>
+<tr><td><kbd>INTB</kbd></td><td>Nền TB không in</td></tr>
+<tr><td><kbd>TVNGUON</kbd></td><td>Xem dấu bản quyền của các block thư viện trong bản vẽ</td></tr>
+</tbody></table></div>
+<h4>Tiện ích</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>THANG</kbd></td><td>Cầu thang (theo bảng Tiện ích)</td></tr>
+<tr><td><kbd>MDUNG</kbd></td><td>Mặt đứng sơ đồ (hộp thông số KT)</td></tr>
+<tr><td><kbd>MCAT</kbd></td><td>Mặt cắt</td></tr>
+<tr><td><kbd>SCT</kbd></td><td>Sửa chi tiết đã vẽ</td></tr>
+<tr><td><kbd>CNMC</kbd></td><td>Cập nhật MC / MĐ / CT</td></tr>
+<tr><td><kbd>TDMC</kbd></td><td>Tự cập nhật: bật / tắt</td></tr>
+<tr><td><kbd>DSO</kbd></td><td>Đánh số nhanh</td></tr>
+<tr><td><kbd>TCD</kbd></td><td>Tổng chiều dài</td></tr>
+<tr><td><kbd>TDT</kbd></td><td>Tổng diện tích</td></tr>
+</tbody></table></div>
+<h4>Chi tiết</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>TCT</kbd></td><td>Trích chi tiết</td></tr>
+<tr><td><kbd>DIMCT</kbd></td><td>DIM hình chi tiết (tự DIM / sửa số đo)</td></tr>
+<tr><td><kbd>CNCT</kbd></td><td>Cập nhật chi tiết</td></tr>
+<tr><td><kbd>CTWC</kbd></td><td>Chi tiết WC</td></tr>
+<tr><td><kbd>CTBP</kbd></td><td>Chi tiết bể phốt</td></tr>
+<tr><td><kbd>CTBN</kbd></td><td>Chi tiết bể nước</td></tr>
+<tr><td><kbd>CTBE</kbd></td><td>Chi tiết thép bể</td></tr>
+</tbody></table></div>
+<h4>Dim - ghi chú</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>DIMMB</kbd></td><td>DIM mặt bằng</td></tr>
+<tr><td><kbd>SDIM</kbd></td><td>Sửa DIM</td></tr>
+<tr><td><kbd>KH</kbd></td><td>Ký hiệu</td></tr>
+<tr><td><kbd>GCH</kbd></td><td>Ghi chú</td></tr>
+<tr><td><kbd>STXT</kbd></td><td>Sửa TEXT</td></tr>
+</tbody></table></div>
+<h4>Khối lượng</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>KLKT</kbd></td><td>Khối lượng → Excel (tự liên kết tên bản vẽ, gắn ID, báo dữ liệu thiếu)</td></tr>
+<tr><td><kbd>KLKTCN</kbd></td><td>Cập nhật Excel đã có</td></tr>
+<tr><td><kbd>TSON</kbd></td><td>Trát - sơn phòng</td></tr>
+<tr><td><kbd>TNGOAI</kbd></td><td>Trát - sơn ngoài</td></tr>
+<tr><td><kbd>GCAO</kbd></td><td>Gán cao / dày</td></tr>
+<tr><td><kbd>GCAOT</kbd></td><td>Gán cao theo bảng Tường</td></tr>
+<tr><td><kbd>SKL</kbd></td><td>Soát dữ liệu</td></tr>
+<tr><td><kbd>LKBV</kbd></td><td>Liên kết bản vẽ (kiểm tra / sửa — KLKT tự liên kết)</td></tr>
+<tr><td><kbd>TIMID</kbd></td><td>Tìm ID</td></tr>
+<tr><td><kbd>THKL</kbd></td><td>Bảng tổng hợp KL trong bản vẽ</td></tr>
+</tbody></table></div>
+<h4>Bảng thống kê</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>BDT</kbd></td><td>Bảng diện tích</td></tr>
+<tr><td><kbd>BHT</kbd></td><td>Bảng hoàn thiện</td></tr>
+<tr><td><kbd>BSAN</kbd></td><td>Bảng lát sàn</td></tr>
+<tr><td><kbd>BCUA</kbd></td><td>Bảng cửa</td></tr>
+<tr><td><kbd>DEMTB</kbd></td><td>Đếm thiết bị</td></tr>
+<tr><td><kbd>TKCUA</kbd></td><td>Bảng cửa (kiểu cũ)</td></tr>
+</tbody></table></div>
+<h4>Hồ sơ</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>DTRKT</kbd></td><td>Dàn trang hồ sơ kiến trúc (Layout / Model)</td></tr>
+<tr><td><kbd>KTEN</kbd></td><td>Khung tên</td></tr>
+<tr><td><kbd>KTRA</kbd></td><td>Kiểm tra</td></tr>
+<tr><td><kbd>XPDF</kbd></td><td>Xuất PDF</td></tr>
+</tbody></table></div>
+<h4>Lệnh cũ / ít dùng (chỉ gõ lệnh)</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>DTOOL</kbd></td><td>Menu hộp thoại cũ (nay: Ribbon, bảng BLV, menu Dtool, LENH)</td></tr>
+<tr><td><kbd>GDIEN</kbd></td><td>Giao diện hộp thoại mới / cũ</td></tr>
+<tr><td><kbd>MENUDT</kbd></td><td>Dựng lại menu Dtool trên thanh menu (bật MENUBAR)</td></tr>
+<tr><td><kbd>ANCUA</kbd></td><td>Ẩn nhãn cửa chọn (= NCUA An)</td></tr>
+<tr><td><kbd>HCUA</kbd></td><td>Hiện nhãn cửa chọn (= NCUA Hien)</td></tr>
+<tr><td><kbd>CDICU</kbd></td><td>Cửa đi vẽ rời kiểu cũ</td></tr>
+<tr><td><kbd>CSOCU</kbd></td><td>Cửa sổ vẽ rời kiểu cũ</td></tr>
+<tr><td><kbd>KLT</kbd></td><td>KL tường chi tiết (kiểu cũ — nay KLKT)</td></tr>
+<tr><td><kbd>CNKL</kbd></td><td>Cập nhật bảng KL tường (kiểu cũ)</td></tr>
+<tr><td><kbd>CSVKL</kbd></td><td>Xuất CSV KL tường (kiểu cũ)</td></tr>
+<tr><td><kbd>DCKL</kbd></td><td>Đối chiếu handle bảng KL tường</td></tr>
+<tr><td><kbd>GTRAT</kbd></td><td>Gán trát theo mặt (kiểu cũ — nay TSON / TNGOAI)</td></tr>
+<tr><td><kbd>DGKL</kbd></td><td>Diễn giải khối lượng: Excel / CSV / bảng trong bản vẽ (Excel nay dùng KLKT)</td></tr>
+<tr><td><kbd>IDNHAN</kbd></td><td>Bật / tắt nhãn ID (lớp không in)</td></tr>
+</tbody></table></div>
+<h4>Khác</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>TDCUA</kbd></td><td>Tự động cập nhật tường sau khi sửa cửa: Bật / Tắt</td></tr>
+<tr><td><kbd>STRUC</kbd></td><td>Sửa lưới trục LTC về mẫu</td></tr>
+<tr><td><kbd>THANGCU</kbd></td><td>Hộp cầu thang kiểu cũ</td></tr>
+</tbody></table></div>
+</div>
+<div class="cmdgrp"><h3>Tab Kết Cấu</h3>
+<h4>Móng</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>QLM</kbd></td><td>Quản lý móng</td></tr>
+<tr><td><kbd>MBM</kbd></td><td>Vẽ nhanh mặt bằng</td></tr>
+<tr><td><kbd>LUOI</kbd></td><td>Lưới trục</td></tr>
+<tr><td><kbd>DM</kbd></td><td>Đặt móng đơn / cọc</td></tr>
+<tr><td><kbd>MBA</kbd></td><td>Vẽ móng băng</td></tr>
+<tr><td><kbd>GM</kbd></td><td>Giằng móng</td></tr>
+<tr><td><kbd>GMB</kbd></td><td>Giao móng băng</td></tr>
+<tr><td><kbd>CN</kbd></td><td>Cập nhật ký hiệu</td></tr>
+<tr><td><kbd>CTM</kbd></td><td>Vẽ chi tiết móng</td></tr>
+<tr><td><kbd>CTMN</kbd></td><td>Chi tiết nhiều móng</td></tr>
+<tr><td><kbd>TKM</kbd></td><td>Thống kê thép → CAD</td></tr>
+<tr><td><kbd>TEN</kbd></td><td>Đổi tên (đối tượng chọn)</td></tr>
+<tr><td><kbd>KLM</kbd></td><td>Khối lượng → Excel</td></tr>
+</tbody></table></div>
+<h4>Dầm</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>QLD</kbd></td><td>Quản lý dầm</td></tr>
+<tr><td><kbd>MBD</kbd></td><td>Vẽ nhanh mặt bằng dầm</td></tr>
+<tr><td><kbd>LUOI</kbd></td><td>Lưới trục</td></tr>
+<tr><td><kbd>DD</kbd></td><td>Đặt dầm</td></tr>
+<tr><td><kbd>GDA</kbd></td><td>Giao dầm</td></tr>
+<tr><td><kbd>CTD</kbd></td><td>Vẽ chi tiết dầm</td></tr>
+<tr><td><kbd>CTDN</kbd></td><td>Chi tiết nhiều dầm</td></tr>
+<tr><td><kbd>TKD</kbd></td><td>Thống kê thép → CAD</td></tr>
+<tr><td><kbd>TEN</kbd></td><td>Đổi tên (đối tượng chọn)</td></tr>
+<tr><td><kbd>KLD</kbd></td><td>Khối lượng → Excel</td></tr>
+</tbody></table></div>
+<h4>Thân</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>QLTH</kbd></td><td>Quản lý kết cấu thân</td></tr>
+<tr><td><kbd>QLC</kbd></td><td>Cột</td></tr>
+<tr><td><kbd>QLV</kbd></td><td>Vách</td></tr>
+<tr><td><kbd>QLTB</kbd></td><td>Thang bộ</td></tr>
+<tr><td><kbd>KCTB</kbd></td><td>Thang bộ từ thang kiến trúc</td></tr>
+<tr><td><kbd>QLLT</kbd></td><td>Lanh tô</td></tr>
+<tr><td><kbd>QLOV</kbd></td><td>Ô văng</td></tr>
+<tr><td><kbd>DCOT</kbd></td><td>Đặt cột lên mặt bằng</td></tr>
+<tr><td><kbd>DVACH</kbd></td><td>Đặt vách</td></tr>
+<tr><td><kbd>DTB</kbd></td><td>Đặt thang</td></tr>
+<tr><td><kbd>DLT</kbd></td><td>Đặt lanh tô</td></tr>
+<tr><td><kbd>DOVA</kbd></td><td>Đặt ô văng</td></tr>
+<tr><td><kbd>CTTH</kbd></td><td>Vẽ chi tiết cấu kiện</td></tr>
+<tr><td><kbd>CTNT</kbd></td><td>Chi tiết nhiều cấu kiện</td></tr>
+<tr><td><kbd>TKTH</kbd></td><td>Thống kê thép → CAD</td></tr>
+<tr><td><kbd>TEN</kbd></td><td>Đổi tên (đối tượng chọn)</td></tr>
+<tr><td><kbd>KLTH</kbd></td><td>Khối lượng → Excel</td></tr>
+</tbody></table></div>
+<h4>Sàn</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>QLS</kbd></td><td>Quản lý sàn</td></tr>
+<tr><td><kbd>SANTD</kbd></td><td>Vẽ sàn tự động</td></tr>
+<tr><td><kbd>DSAN</kbd></td><td>Đặt ô sàn (2 góc / trục)</td></tr>
+<tr><td><kbd>MBTS</kbd></td><td>Thép sàn liền mạch theo mặt bằng</td></tr>
+<tr><td><kbd>CTS</kbd></td><td>Chi tiết sàn</td></tr>
+<tr><td><kbd>TKTH</kbd></td><td>Thống kê thép → CAD</td></tr>
+<tr><td><kbd>KLTH</kbd></td><td>Khối lượng → Excel</td></tr>
+</tbody></table></div>
+<h4>Hồ sơ</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>TANG</kbd></td><td>Quản lý tầng</td></tr>
+<tr><td><kbd>DTR</kbd></td><td>Dàn trang hồ sơ</td></tr>
+<tr><td><kbd>INBO</kbd></td><td>In bộ hồ sơ (Layout / Model)</td></tr>
+<tr><td><kbd>DTRK</kbd></td><td>Dàn trang shop theo khung (Layout)</td></tr>
+<tr><td><kbd>DTRKM</kbd></td><td>Dàn trang shop trong Model (nhẹ)</td></tr>
+<tr><td><kbd>RALOI</kbd></td><td>Rà lỗi hồ sơ</td></tr>
+<tr><td><kbd>CNTANG</kbd></td><td>Cập nhật khung tầng</td></tr>
+<tr><td><kbd>KLDT</kbd></td><td>Khối lượng dự toán</td></tr>
+<tr><td><kbd>KLDTN</kbd></td><td>Khối lượng dự toán nhiều bản vẽ</td></tr>
+<tr><td><kbd>CATTHEP</kbd></td><td>Bảng cắt thép</td></tr>
+<tr><td><kbd>CATTHEPN</kbd></td><td>Bảng cắt uốn nhiều bản vẽ</td></tr>
+<tr><td><kbd>IFCKC</kbd></td><td>Xuất IFC kết cấu có cốt thép (BIM)</td></tr>
+<tr><td><kbd>XEM3D</kbd></td><td>Xem cốt thép 3D từng cấu kiện</td></tr>
+<tr><td><kbd>MADM</kbd></td><td>Bảng mã định mức</td></tr>
+<tr><td><kbd>GANID</kbd></td><td>Gắn ID cấu kiện</td></tr>
+<tr><td><kbd>TIMID</kbd></td><td>Tìm theo ID</td></tr>
+<tr><td><kbd>DSID</kbd></td><td>Danh sách ID</td></tr>
+</tbody></table></div>
+<h4>Chung</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>CHUAN</kbd></td><td>Chuẩn hóa layer TCVN</td></tr>
+<tr><td><kbd>TRUC</kbd></td><td>Trục đơn (2 điểm)</td></tr>
+<tr><td><kbd>LUOI</kbd></td><td>Lưới trục chung</td></tr>
+</tbody></table></div>
+<h4>Dòng lệnh (script)</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>-QLM</kbd></td><td>Thêm móng bằng dòng lệnh</td></tr>
+<tr><td><kbd>-QLD</kbd></td><td>Thêm dầm bằng dòng lệnh</td></tr>
+<tr><td><kbd>-QLTH</kbd></td><td>Thêm cấu kiện thân bằng dòng lệnh</td></tr>
+<tr><td><kbd>-LUOI</kbd></td><td>Lưới trục bằng dòng lệnh</td></tr>
+<tr><td><kbd>-MBM</kbd></td><td>Mặt bằng móng bằng dòng lệnh</td></tr>
+<tr><td><kbd>-MBD</kbd></td><td>Mặt bằng dầm bằng dòng lệnh</td></tr>
+<tr><td><kbd>-TANG</kbd></td><td>Khai báo tầng bằng dòng lệnh</td></tr>
+<tr><td><kbd>-RALOI</kbd></td><td>Rà lỗi hồ sơ bằng dòng lệnh</td></tr>
+<tr><td><kbd>-BQ</kbd></td><td>Nhập mã bản quyền bằng dòng lệnh</td></tr>
+<tr><td><kbd>-SUACK</kbd></td><td>Sửa thông số cấu kiện đã có bằng dòng lệnh</td></tr>
+<tr><td><kbd>-TSC</kbd></td><td>Thông số chung bằng dòng lệnh (cả thông tin khung tên shop)</td></tr>
+<tr><td><kbd>-CHENMODEL</kbd></td><td>Chèn toàn bộ Model của bản vẽ khác (ghép bộ shop)</td></tr>
+<tr><td><kbd>-XKL</kbd></td><td>Ghi khối lượng dự toán của bản vẽ vào tệp dữ liệu (gộp bằng KLDTN)</td></tr>
+<tr><td><kbd>-XTHEP</kbd></td><td>Ghi danh sách thép của bản vẽ vào tệp dữ liệu (gộp bằng CATTHEPN)</td></tr>
+<tr><td><kbd>-IFCKC</kbd></td><td>Xuất IFC kết cấu có cốt thép bằng dòng lệnh</td></tr>
+</tbody></table></div>
+<h4>Khác</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>QLBE</kbd></td><td>Quản lý bể ngầm BTCT</td></tr>
+<tr><td><kbd>DBE</kbd></td><td>Đặt bể ngầm</td></tr>
+<tr><td><kbd>CTC</kbd></td><td>Chi tiết cột</td></tr>
+<tr><td><kbd>CTV</kbd></td><td>Chi tiết vách</td></tr>
+<tr><td><kbd>CTLT</kbd></td><td>Chi tiết lanh tô</td></tr>
+<tr><td><kbd>CTOV</kbd></td><td>Chi tiết ô văng</td></tr>
+<tr><td><kbd>CTTB</kbd></td><td>Chi tiết thang bộ</td></tr>
+<tr><td><kbd>RIB</kbd></td><td>Hiện lại tab Ribbon</td></tr>
+<tr><td><kbd>MAU</kbd></td><td>Tạo bản vẽ mẫu</td></tr>
+<tr><td><kbd>NHOM</kbd></td><td>Hộp nhóm lệnh (CT / KL / BTK / HS)</td></tr>
+</tbody></table></div>
+</div>
+<div class="cmdgrp"><h3>Tab Điện Nước</h3>
+<h4>Tầng</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>DNTANG</kbd></td><td>Khai báo tầng (vùng mặt bằng kiến trúc từng tầng; MBTD tự khai báo)</td></tr>
+</tbody></table></div>
+<h4>Điện</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>DNBT</kbd></td><td>Bố trí điện tự động (đèn, công tắc, ổ cắm, điều hòa, tủ điện) + đi dây</td></tr>
+<tr><td><kbd>DNDD</kbd></td><td>Chia lộ + đi dây lại sau khi sửa tay</td></tr>
+<tr><td><kbd>DNKH</kbd></td><td>Chèn ký hiệu điện bằng tay</td></tr>
+<tr><td><kbd>DNSD</kbd></td><td>Sơ đồ nguyên lý tủ điện + bảng tính phụ tải</td></tr>
+</tbody></table></div>
+<h4>Cấp thoát nước</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>DNCN</kbd></td><td>Cấp nước: trục, ống PPR lạnh / nóng, van</td></tr>
+<tr><td><kbd>DNTN</kbd></td><td>Thoát nước: trục xí / rửa / thông hơi / mưa, ống uPVC, phễu thu</td></tr>
+<tr><td><kbd>DNSN</kbd></td><td>Sơ đồ nguyên lý cấp nước + thoát nước</td></tr>
+</tbody></table></div>
+<h4>Hồ sơ điện nước</h4><div class="tw"><table><thead><tr><th>Lệnh</th><th>Việc làm</th></tr></thead><tbody>
+<tr><td><kbd>DNTK</kbd></td><td>Bảng thống kê vật tư điện nước</td></tr>
+<tr><td><kbd>DNCT</kbd></td><td>Bảng chú thích ký hiệu</td></tr>
+<tr><td><kbd>DNTM</kbd></td><td>Thuyết minh tính toán điện nước</td></tr>
+<tr><td><kbd>DTRDN</kbd></td><td>Dàn trang hồ sơ điện nước (Layout / Model)</td></tr>
+<tr><td><kbd>DNNEN</kbd></td><td>Cập nhật mặt bằng nền theo kiến trúc</td></tr>
+<tr><td><kbd>BLVDN</kbd></td><td>Bảng làm việc Điện nước (tùy chọn + nút lệnh)</td></tr>
+</tbody></table></div>
+</div>
+</section>
+      <div class="foot">
+        <span>Dtool 2.3.88 · tài liệu cập nhật 20/10/2026</span>
+        <span>Liên hệ: Zalo / điện thoại 0937 142 789 · <a href="/">dtool.vn</a></span>
+      </div>
+    </div>
+  </main>
+</div>
+<script>
+(function(){
+  // mục đang đọc trên mục lục
+  var links = {}; document.querySelectorAll('.toc a').forEach(function(a){ links[a.getAttribute('href').slice(1)] = a; });
+  var cur = null;
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if (e.isIntersecting) { if (cur) cur.classList.remove('on'); cur = links[e.target.id]; if (cur) { cur.classList.add('on'); } } });
+    }, { rootMargin: '-80px 0px -70% 0px' });
+    document.querySelectorAll('section.sec').forEach(function(s){ io.observe(s); });
+  }
+  // tìm lệnh: bỏ dấu, khớp tên lệnh hoặc mô tả
+  var q = document.getElementById('cmdq'); if (!q) return;
+  var fold = function(s){ return String(s).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[đĐ]/g, 'd').toLowerCase(); };
+  var rows = Array.prototype.slice.call(document.querySelectorAll('.cmdgrp tbody tr'));
+  rows.forEach(function(r){ r._t = fold(r.textContent); });
+  var cnt = document.getElementById('cmdn'), none = document.getElementById('cmdnone');
+  q.addEventListener('input', function(){
+    var t = fold(q.value.trim()), n = 0;
+    rows.forEach(function(r){ var ok = !t || r._t.indexOf(t) >= 0; r.hidden = !ok; if (ok) n++; });
+    document.querySelectorAll('.cmdgrp .tw').forEach(function(w){ var any = w.querySelector('tbody tr:not([hidden])'); w.hidden = !any; var h = w.previousElementSibling; if (h && h.tagName === 'H4') h.hidden = !any; });
+    document.querySelectorAll('.cmdgrp').forEach(function(g){ g.hidden = !g.querySelector('tbody tr:not([hidden])'); });
+    cnt.textContent = t ? n + ' lệnh khớp' : '222 lệnh';
+    none.style.display = n ? 'none' : 'block';
+  });
+})();
+</script>
+</body>
+</html>
